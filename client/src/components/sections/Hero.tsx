@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export function Hero() {
+  const { t } = useTranslation();
+
   return (
     <div className="relative overflow-hidden bg-gray-50">
       <div className="container mx-auto px-4 py-24 sm:py-32">
@@ -12,22 +15,20 @@ export function Hero() {
           className="text-center max-w-3xl mx-auto"
         >
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-            Global Logistics Solutions for Modern Business
+            {t('hero.title')}
           </h1>
           <p className="mt-6 text-lg leading-8 text-gray-600">
-            BRL Global delivers seamless freight forwarding and logistics services
-            across sea, air, and land. We connect businesses worldwide with
-            reliable, efficient shipping solutions.
+            {t('hero.subtitle')}
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Button size="lg">Get Started</Button>
+            <Button size="lg">{t('hero.cta.primary')}</Button>
             <Button size="lg" variant="outline">
-              Learn More
+              {t('hero.cta.secondary')}
             </Button>
           </div>
         </motion.div>
       </div>
-      
+
       <div className="absolute inset-x-0 -z-10 transform-gpu overflow-hidden blur-3xl">
         <svg
           className="relative left-[calc(50%-11rem)] -z-10 h-[21.1875rem] max-w-none -translate-x-1/2 rotate-[30deg] sm:left-[calc(50%-30rem)] sm:h-[42.375rem]"
