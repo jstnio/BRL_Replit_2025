@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "about": "About",
+    "contact": "Contact",
+    "getQuote": "Get Quote"
+  },
+  "hero": {
+    "title": "Global Logistics Solutions for Modern Business",
+    "subtitle": "BRL Global delivers seamless freight forwarding and logistics services across sea, air, and land. We connect businesses worldwide with reliable, efficient shipping solutions.",
+    "cta": {
+      "primary": "Get Started",
+      "secondary": "Learn More"
+    }
+  },
+  "services": {
+    "title": "Our Services",
+    "subtitle": "Comprehensive logistics solutions tailored to your business needs",
+    "oceanFreight": {
+      "title": "Ocean Freight",
+      "description": "Reliable ocean freight solutions for your global shipping needs. FCL and LCL services available."
+    },
+    "airFreight": {
+      "title": "Air Freight",
+      "description": "Fast and efficient air freight services for time-sensitive cargo worldwide."
+    },
+    "groundTransport": {
+      "title": "Ground Transport",
+      "description": "Comprehensive ground transportation solutions for domestic and cross-border shipping."
+    }
+  }
+}

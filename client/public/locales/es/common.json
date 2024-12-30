@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "services": "Servicios",
+    "about": "Nosotros",
+    "contact": "Contacto",
+    "getQuote": "Cotizar"
+  },
+  "hero": {
+    "title": "Soluciones Logísticas Globales para Negocios Modernos",
+    "subtitle": "BRL Global ofrece servicios de transporte y logística sin problemas por mar, aire y tierra. Conectamos empresas en todo el mundo con soluciones de envío confiables y eficientes.",
+    "cta": {
+      "primary": "Comenzar",
+      "secondary": "Más Información"
+    }
+  },
+  "services": {
+    "title": "Nuestros Servicios",
+    "subtitle": "Soluciones logísticas integrales adaptadas a las necesidades de su negocio",
+    "oceanFreight": {
+      "title": "Transporte Marítimo",
+      "description": "Soluciones confiables de transporte marítimo para sus necesidades globales. Servicios FCL y LCL disponibles."
+    },
+    "airFreight": {
+      "title": "Transporte Aéreo",
+      "description": "Servicios de carga aérea rápidos y eficientes para cargas urgentes en todo el mundo."
+    },
+    "groundTransport": {
+      "title": "Transporte Terrestre",
+      "description": "Soluciones integrales de transporte terrestre para envíos nacionales y transfronterizos."
+    }
+  }
+}

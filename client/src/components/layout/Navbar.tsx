@@ -1,19 +1,36 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, X } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Menu, X, Globe } from "lucide-react";
 
 const navItems = [
-  { label: "Home", href: "/" },
-  { label: "Services", href: "/services" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
+  { label: "nav.home", href: "/" },
+  { label: "nav.services", href: "/services" },
+  { label: "nav.about", href: "/about" },
+  { label: "nav.contact", href: "/contact" },
+];
+
+const languages = [
+  { code: "en", label: "English" },
+  { code: "es", label: "Español" },
 ];
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
 
   return (
     <nav className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
@@ -31,11 +48,29 @@ export function Navbar() {
                   location === item.href ? "text-primary" : "text-muted-foreground"
                 }`}
               >
-                {item.label}
+                {t(item.label)}
               </a>
             </Link>
           ))}
-          <Button>Get Quote</Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Globe className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {languages.map((lang) => (
+                <DropdownMenuItem
+                  key={lang.code}
+                  onClick={() => changeLanguage(lang.code)}
+                  className="cursor-pointer"
+                >
+                  {lang.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button>{t('nav.getQuote')}</Button>
         </div>
 
         {/* Mobile Navigation */}
@@ -61,11 +96,25 @@ export function Navbar() {
                         : "text-muted-foreground"
                     }`}
                   >
-                    {item.label}
+                    {t(item.label)}
                   </a>
                 </Link>
               ))}
-              <Button className="mt-4">Get Quote</Button>
+              <div className="flex flex-col gap-2 mt-4">
+                {languages.map((lang) => (
+                  <Button
+                    key={lang.code}
+                    variant="ghost"
+                    onClick={() => {
+                      changeLanguage(lang.code);
+                      setIsOpen(false);
+                    }}
+                  >
+                    {lang.label}
+                  </Button>
+                ))}
+              </div>
+              <Button className="mt-4">{t('nav.getQuote')}</Button>
             </nav>
           </SheetContent>
         </Sheet>
