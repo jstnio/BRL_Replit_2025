@@ -6,10 +6,12 @@ import { Contact } from "./pages/Contact";
 import { Navbar } from "./components/layout/Navbar";
 import { Footer } from "./components/layout/Footer";
 import { Toaster } from "@/components/ui/toaster";
+import { CookieConsent } from "./components/CookieConsent";
 
 function App() {
   return (
     <div className="min-h-screen flex flex-col">
+      <CookieConsent />
       <Navbar />
       <main className="flex-grow">
         <Switch>
