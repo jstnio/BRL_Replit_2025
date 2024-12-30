@@ -28,6 +28,40 @@
     "groundTransport": {
       "title": "Ground Transport",
       "description": "Comprehensive ground transportation solutions for domestic and cross-border shipping."
+    },
+    "page": {
+      "title": "Our Services",
+      "subtitle": "Comprehensive logistics solutions tailored to meet your global shipping needs. We offer end-to-end supply chain services with reliability and efficiency.",
+      "oceanFreight": {
+        "title": "Ocean Freight",
+        "description": "Complete ocean freight solutions including FCL (Full Container Load) and LCL (Less than Container Load) services. We handle customs clearance, documentation, and port handling.",
+        "features": ["FCL & LCL Services", "Port-to-Port Delivery", "Custom Clearance"]
+      },
+      "airFreight": {
+        "title": "Air Freight",
+        "description": "Express air freight services for time-critical shipments. Our global network ensures quick and reliable delivery to any destination worldwide.",
+        "features": ["Express Delivery", "Door-to-Door Service", "Priority Handling"]
+      },
+      "groundTransport": {
+        "title": "Ground Transport",
+        "description": "Efficient ground transportation solutions including FTL and LTL services. We offer cross-border shipping and domestic distribution services.",
+        "features": ["FTL & LTL Options", "Cross-border Solutions", "Last Mile Delivery"]
+      },
+      "cargoInsurance": {
+        "title": "Cargo Insurance",
+        "description": "Comprehensive cargo insurance options to protect your shipments against loss, damage, or theft during transit.",
+        "features": ["Full Coverage", "Risk Assessment", "Claims Support"]
+      },
+      "supplyChain": {
+        "title": "Supply Chain Solutions",
+        "description": "End-to-end supply chain management services including warehousing, distribution, and inventory management.",
+        "features": ["Inventory Management", "Distribution", "Order Fulfillment"]
+      },
+      "tracking": {
+        "title": "Track & Trace",
+        "description": "Real-time shipment tracking and monitoring services with detailed analytics and reporting capabilities.",
+        "features": ["Real-time Updates", "Analytics Dashboard", "Status Notifications"]
+      }
     }
   },
   "about": {

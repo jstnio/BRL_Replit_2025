@@ -28,6 +28,40 @@
     "groundTransport": {
       "title": "Transporte Terrestre",
       "description": "Soluciones integrales de transporte terrestre para envíos nacionales y transfronterizos."
+    },
+    "page": {
+      "title": "Nuestros Servicios",
+      "subtitle": "Soluciones logísticas integrales adaptadas para satisfacer sus necesidades de envío global. Ofrecemos servicios de cadena de suministro de principio a fin con confiabilidad y eficiencia.",
+      "oceanFreight": {
+        "title": "Transporte Marítimo",
+        "description": "Soluciones completas de transporte marítimo que incluyen servicios FCL (Contenedor Completo) y LCL (Contenedor Parcial). Gestionamos el despacho aduanero, documentación y manejo portuario.",
+        "features": ["Servicios FCL y LCL", "Entrega Puerto a Puerto", "Despacho Aduanero"]
+      },
+      "airFreight": {
+        "title": "Transporte Aéreo",
+        "description": "Servicios express de carga aérea para envíos urgentes. Nuestra red global garantiza una entrega rápida y confiable a cualquier destino mundial.",
+        "features": ["Entrega Express", "Servicio Puerta a Puerta", "Manejo Prioritario"]
+      },
+      "groundTransport": {
+        "title": "Transporte Terrestre",
+        "description": "Soluciones eficientes de transporte terrestre que incluyen servicios FTL y LTL. Ofrecemos envíos transfronterizos y servicios de distribución nacional.",
+        "features": ["Opciones FTL y LTL", "Soluciones Transfronterizas", "Entrega de Última Milla"]
+      },
+      "cargoInsurance": {
+        "title": "Seguro de Carga",
+        "description": "Opciones integrales de seguro de carga para proteger sus envíos contra pérdidas, daños o robo durante el tránsito.",
+        "features": ["Cobertura Completa", "Evaluación de Riesgos", "Soporte de Reclamos"]
+      },
+      "supplyChain": {
+        "title": "Soluciones de Cadena de Suministro",
+        "description": "Servicios de gestión de cadena de suministro de principio a fin, incluyendo almacenaje, distribución y gestión de inventario.",
+        "features": ["Gestión de Inventario", "Distribución", "Cumplimiento de Pedidos"]
+      },
+      "tracking": {
+        "title": "Seguimiento y Rastreo",
+        "description": "Servicios de seguimiento y monitoreo de envíos en tiempo real con capacidades detalladas de análisis e informes.",
+        "features": ["Actualizaciones en Tiempo Real", "Panel de Análisis", "Notificaciones de Estado"]
+      }
     }
   },
   "about": {
