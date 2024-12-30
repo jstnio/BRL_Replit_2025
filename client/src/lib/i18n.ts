@@ -10,9 +10,14 @@ i18n
   .init({
     fallbackLng: "en",
     supportedLngs: ["en", "es"],
+    defaultNS: "common",
+    ns: ["common"],
     debug: process.env.NODE_ENV === "development",
     interpolation: {
       escapeValue: false,
+    },
+    backend: {
+      loadPath: "/locales/{{lng}}/{{ns}}.json",
     },
     detection: {
       order: ["querystring", "navigator"],
