@@ -5,22 +5,29 @@ import { Avatar } from "@/components/ui/avatar";
 import { QuoteIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
+type Testimonial = {
+  quote: string;
+  author: string;
+  title: string;
+  company: string;
+};
+
 export function TestimonialsCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const { t } = useTranslation();
 
-  const testimonials = t('testimonials.items', { returnObjects: true });
+  const testimonials = t('testimonials.items', { returnObjects: true }) as Testimonial[];
 
   useEffect(() => {
-    if (!isAutoPlaying) return;
+    if (!isAutoPlaying || !testimonials?.length) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((current) => (current + 1) % testimonials.length);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying, testimonials.length]);
+  }, [isAutoPlaying, testimonials?.length]);
 
   const slideVariants = {
     enter: (direction: number) => ({
@@ -38,6 +45,8 @@ export function TestimonialsCarousel() {
       opacity: 0
     })
   };
+
+  if (!testimonials?.length) return null;
 
   const swipeConfidenceThreshold = 10000;
   const swipePower = (offset: number, velocity: number) => {

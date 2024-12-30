@@ -3,47 +3,46 @@ import { Ship, Plane, Truck, Box, BarChart3, Warehouse } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 
-const services = [
-  {
-    titleKey: "services.page.oceanFreight.title",
-    descriptionKey: "services.page.oceanFreight.description",
-    icon: Ship,
-    featuresKey: "services.page.oceanFreight.features",
-  },
-  {
-    titleKey: "services.page.airFreight.title",
-    descriptionKey: "services.page.airFreight.description",
-    icon: Plane,
-    featuresKey: "services.page.airFreight.features",
-  },
-  {
-    titleKey: "services.page.groundTransport.title",
-    descriptionKey: "services.page.groundTransport.description",
-    icon: Truck,
-    featuresKey: "services.page.groundTransport.features",
-  },
-  {
-    titleKey: "services.page.cargoInsurance.title",
-    descriptionKey: "services.page.cargoInsurance.description",
-    icon: Box,
-    featuresKey: "services.page.cargoInsurance.features",
-  },
-  {
-    titleKey: "services.page.supplyChain.title",
-    descriptionKey: "services.page.supplyChain.description",
-    icon: Warehouse,
-    featuresKey: "services.page.supplyChain.features",
-  },
-  {
-    titleKey: "services.page.tracking.title",
-    descriptionKey: "services.page.tracking.description",
-    icon: BarChart3,
-    featuresKey: "services.page.tracking.features",
-  },
-];
-
 export function Services() {
   const { t } = useTranslation();
+  const services = [
+    {
+      titleKey: "services.page.oceanFreight.title",
+      descriptionKey: "services.page.oceanFreight.description",
+      icon: Ship,
+      featuresKey: "services.page.oceanFreight.features",
+    },
+    {
+      titleKey: "services.page.airFreight.title",
+      descriptionKey: "services.page.airFreight.description",
+      icon: Plane,
+      featuresKey: "services.page.airFreight.features",
+    },
+    {
+      titleKey: "services.page.groundTransport.title",
+      descriptionKey: "services.page.groundTransport.description",
+      icon: Truck,
+      featuresKey: "services.page.groundTransport.features",
+    },
+    {
+      titleKey: "services.page.cargoInsurance.title",
+      descriptionKey: "services.page.cargoInsurance.description",
+      icon: Box,
+      featuresKey: "services.page.cargoInsurance.features",
+    },
+    {
+      titleKey: "services.page.supplyChain.title",
+      descriptionKey: "services.page.supplyChain.description",
+      icon: Warehouse,
+      featuresKey: "services.page.supplyChain.features",
+    },
+    {
+      titleKey: "services.page.tracking.title",
+      descriptionKey: "services.page.tracking.description",
+      icon: BarChart3,
+      featuresKey: "services.page.tracking.features",
+    },
+  ];
 
   return (
     <div className="py-16 bg-gray-50">
@@ -76,14 +75,18 @@ export function Services() {
                   <CardTitle>{t(service.titleKey)}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground mb-4">{t(service.descriptionKey)}</p>
+                  <p className="text-muted-foreground mb-4">
+                    {t(service.descriptionKey)}
+                  </p>
                   <ul className="space-y-2">
-                    {t(service.featuresKey, { returnObjects: true }).map((feature: string) => (
-                      <li key={feature} className="flex items-center text-sm">
-                        <div className="h-1.5 w-1.5 rounded-full bg-primary mr-2" />
-                        {feature}
-                      </li>
-                    ))}
+                    {(t(service.featuresKey, { returnObjects: true }) as string[]).map(
+                      (feature, idx) => (
+                        <li key={`${service.titleKey}-feature-${idx}`} className="flex items-center text-sm">
+                          <div className="h-1.5 w-1.5 rounded-full bg-primary mr-2" />
+                          {feature}
+                        </li>
+                      )
+                    )}
                   </ul>
                 </CardContent>
               </Card>
