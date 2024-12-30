@@ -30,6 +30,40 @@
       "description": "Soluciones integrales de transporte terrestre para envíos nacionales y transfronterizos."
     }
   },
+  "about": {
+    "title": "Sobre BRL Global",
+    "subtitle": "Un proveedor líder de soluciones logísticas globales, comprometido con la excelencia e innovación en servicios de transporte de carga.",
+    "stats": {
+      "experience": "Años de Experiencia",
+      "offices": "Oficinas Globales",
+      "clients": "Clientes Satisfechos",
+      "countries": "Países Atendidos"
+    },
+    "story": {
+      "title": "Nuestra Historia",
+      "part1": "Fundada en 2008, BRL Global ha crecido de ser un pequeño transportista regional a un proveedor líder de logística internacional. Nuestro viaje ha estado marcado por la innovación continua, la expansión estratégica y un compromiso inquebrantable con el servicio al cliente.",
+      "part2": "Hoy operamos en múltiples continentes, atendiendo a diversas industrias con soluciones logísticas integrales. Nuestro éxito se basa en nuestro equipo dedicado, tecnología avanzada y sólidas asociaciones con transportistas y agentes en todo el mundo."
+    },
+    "values": {
+      "title": "Nuestros Valores",
+      "excellence": {
+        "title": "Excelencia",
+        "description": "Nos esforzamos por la excelencia en cada aspecto de nuestro servicio, manteniendo los más altos estándares de calidad y profesionalismo."
+      },
+      "customerFocus": {
+        "title": "Enfoque al Cliente",
+        "description": "Nuestros clientes son el centro de todo lo que hacemos. Construimos relaciones duraderas a través de un servicio y soporte dedicado."
+      },
+      "globalReach": {
+        "title": "Alcance Global",
+        "description": "Con una red mundial de socios y oficinas, proporcionamos soluciones logísticas sin problemas a través de los continentes."
+      },
+      "innovation": {
+        "title": "Innovación",
+        "description": "Invertimos continuamente en tecnología y procesos para mejorar nuestros servicios y mantenernos a la vanguardia de las tendencias de la industria."
+      }
+    }
+  },
   "footer": {
     "description": "Su socio de confianza en soluciones logísticas y transporte de carga global.",
     "services": {

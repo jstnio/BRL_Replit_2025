@@ -30,6 +30,40 @@
       "description": "Comprehensive ground transportation solutions for domestic and cross-border shipping."
     }
   },
+  "about": {
+    "title": "About BRL Global",
+    "subtitle": "A leading provider of global logistics solutions, committed to excellence and innovation in freight forwarding services.",
+    "stats": {
+      "experience": "Years of Experience",
+      "offices": "Global Offices",
+      "clients": "Satisfied Clients",
+      "countries": "Countries Served"
+    },
+    "story": {
+      "title": "Our Story",
+      "part1": "Founded in 2008, BRL Global has grown from a small regional freight forwarder to a leading international logistics provider. Our journey has been marked by continuous innovation, strategic expansion, and an unwavering commitment to customer service.",
+      "part2": "Today, we operate across multiple continents, serving diverse industries with comprehensive logistics solutions. Our success is built on our dedicated team, advanced technology, and strong partnerships with carriers and agents worldwide."
+    },
+    "values": {
+      "title": "Our Values",
+      "excellence": {
+        "title": "Excellence",
+        "description": "We strive for excellence in every aspect of our service, maintaining the highest standards of quality and professionalism."
+      },
+      "customerFocus": {
+        "title": "Customer Focus",
+        "description": "Our clients are at the heart of everything we do. We build lasting relationships through dedicated service and support."
+      },
+      "globalReach": {
+        "title": "Global Reach",
+        "description": "With a worldwide network of partners and offices, we provide seamless logistics solutions across continents."
+      },
+      "innovation": {
+        "title": "Innovation",
+        "description": "We continuously invest in technology and processes to improve our services and stay ahead of industry trends."
+      }
+    }
+  },
   "footer": {
     "description": "Your trusted partner in global freight forwarding and logistics solutions.",
     "services": {
