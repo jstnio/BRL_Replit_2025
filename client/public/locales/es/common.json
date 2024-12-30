@@ -29,5 +29,30 @@
       "title": "Transporte Terrestre",
       "description": "Soluciones integrales de transporte terrestre para envíos nacionales y transfronterizos."
     }
+  },
+  "footer": {
+    "description": "Su socio de confianza en soluciones logísticas y transporte de carga global.",
+    "services": {
+      "title": "Servicios",
+      "oceanFreight": "Transporte Marítimo",
+      "airFreight": "Transporte Aéreo",
+      "groundTransport": "Transporte Terrestre"
+    },
+    "company": {
+      "title": "Empresa",
+      "about": "Sobre Nosotros",
+      "contact": "Contacto"
+    },
+    "contact": {
+      "title": "Contacto",
+      "address": {
+        "line1": "1234 Logistics Way",
+        "line2": "Suite 100",
+        "line3": "Los Angeles, CA 90001"
+      },
+      "phone": "+1 (555) 123-4567",
+      "email": "contact@brlglobal.com"
+    },
+    "copyright": "© {{year}} BRL Global. Todos los derechos reservados."
   }
 }

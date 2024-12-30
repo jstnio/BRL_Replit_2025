@@ -29,5 +29,30 @@
       "title": "Ground Transport",
       "description": "Comprehensive ground transportation solutions for domestic and cross-border shipping."
     }
+  },
+  "footer": {
+    "description": "Your trusted partner in global freight forwarding and logistics solutions.",
+    "services": {
+      "title": "Services",
+      "oceanFreight": "Ocean Freight",
+      "airFreight": "Air Freight",
+      "groundTransport": "Ground Transport"
+    },
+    "company": {
+      "title": "Company",
+      "about": "About Us",
+      "contact": "Contact"
+    },
+    "contact": {
+      "title": "Contact",
+      "address": {
+        "line1": "1234 Logistics Way",
+        "line2": "Suite 100",
+        "line3": "Los Angeles, CA 90001"
+      },
+      "phone": "+1 (555) 123-4567",
+      "email": "contact@brlglobal.com"
+    },
+    "copyright": "© {{year}} BRL Global. All rights reserved."
   }
 }
