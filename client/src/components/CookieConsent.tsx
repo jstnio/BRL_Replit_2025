@@ -1,27 +1,31 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 
 export function CookieConsent() {
   const { toast } = useToast();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
     const hasConsented = localStorage.getItem("cookieConsent");
-    
+
     if (!hasConsented) {
-      toast({
+      const { dismiss } = toast({
         title: "Cookie Notice",
         description: "We use cookies to enhance your browsing experience and analyze site traffic.",
-        duration: 0, // Toast will not auto-dismiss
+        duration: Infinity,
         action: (
           <Button
             variant="default"
             onClick={() => {
               localStorage.setItem("cookieConsent", "true");
-              // Close the toast by not providing a new one
-              toast({
-                duration: 0,
-              });
+              dismiss();
             }}
           >
             Accept
@@ -29,7 +33,7 @@ export function CookieConsent() {
         ),
       });
     }
-  }, [toast]);
+  }, [mounted, toast]);
 
   return null;
 }
