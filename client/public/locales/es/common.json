@@ -64,6 +64,60 @@
       }
     }
   },
+  "contact": {
+    "title": "Contáctenos",
+    "subtitle": "Póngase en contacto con nuestro equipo para cualquier consulta o soporte",
+    "info": {
+      "address": {
+        "title": "Dirección",
+        "line1": "1234 Logistics Way",
+        "line2": "Suite 100",
+        "line3": "Los Angeles, CA 90001"
+      },
+      "phone": {
+        "title": "Teléfono",
+        "main": "+1 (555) 123-4567",
+        "support": "+1 (555) 987-6543"
+      },
+      "email": {
+        "title": "Correo Electrónico",
+        "general": "contact@brlglobal.com",
+        "support": "support@brlglobal.com"
+      },
+      "hours": {
+        "title": "Horario de Atención",
+        "days": "Lunes - Viernes",
+        "time": "9:00 AM - 6:00 PM EST"
+      }
+    },
+    "form": {
+      "title": "Envíenos un Mensaje",
+      "fields": {
+        "name": "Nombre Completo",
+        "email": "Correo Electrónico",
+        "phone": "Número de Teléfono",
+        "company": "Nombre de la Empresa",
+        "message": "Mensaje"
+      },
+      "placeholders": {
+        "name": "Ingrese su nombre completo",
+        "email": "Ingrese su correo electrónico",
+        "phone": "Ingrese su número de teléfono",
+        "company": "Ingrese el nombre de su empresa",
+        "message": "¿Cómo podemos ayudarle?"
+      },
+      "submit": "Enviar Mensaje",
+      "submitting": "Enviando...",
+      "success": {
+        "title": "Mensaje Enviado",
+        "message": "Gracias por contactarnos. Nos pondremos en contacto con usted pronto."
+      },
+      "error": {
+        "title": "Error",
+        "message": "Hubo un error al enviar su mensaje. Por favor, inténtelo de nuevo."
+      }
+    }
+  },
   "footer": {
     "description": "Su socio de confianza en soluciones logísticas y transporte de carga global.",
     "services": {

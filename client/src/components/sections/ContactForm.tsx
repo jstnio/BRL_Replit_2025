@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import {
   Form,
   FormControl,
@@ -29,6 +30,7 @@ type FormData = z.infer<typeof formSchema>;
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -47,14 +49,14 @@ export function ContactForm() {
       // In a real application, you would send this data to your backend
       await new Promise((resolve) => setTimeout(resolve, 1000));
       toast({
-        title: "Message Sent",
-        description: "We'll get back to you as soon as possible.",
+        title: t('contact.form.success.title'),
+        description: t('contact.form.success.message'),
       });
       form.reset();
     } catch (error) {
       toast({
-        title: "Error",
-        description: "There was a problem sending your message. Please try again.",
+        title: t('contact.form.error.title'),
+        description: t('contact.form.error.message'),
         variant: "destructive",
       });
     } finally {
@@ -69,7 +71,7 @@ export function ContactForm() {
       transition={{ duration: 0.5 }}
       className="bg-white p-8 rounded-lg shadow-sm"
     >
-      <h2 className="text-2xl font-bold mb-6">Send us a Message</h2>
+      <h2 className="text-2xl font-bold mb-6">{t('contact.form.title')}</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -78,9 +80,9 @@ export function ContactForm() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>{t('contact.form.fields.name')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="John Doe" {...field} />
+                    <Input placeholder={t('contact.form.placeholders.name')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -92,9 +94,9 @@ export function ContactForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t('contact.form.fields.email')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="john@example.com" {...field} />
+                    <Input placeholder={t('contact.form.placeholders.email')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -108,9 +110,9 @@ export function ContactForm() {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone</FormLabel>
+                  <FormLabel>{t('contact.form.fields.phone')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="+1 (555) 123-4567" {...field} />
+                    <Input placeholder={t('contact.form.placeholders.phone')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -122,9 +124,9 @@ export function ContactForm() {
               name="company"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Company</FormLabel>
+                  <FormLabel>{t('contact.form.fields.company')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Your Company" {...field} />
+                    <Input placeholder={t('contact.form.placeholders.company')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -137,10 +139,10 @@ export function ContactForm() {
             name="message"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Message</FormLabel>
+                <FormLabel>{t('contact.form.fields.message')}</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="How can we help you?"
+                    placeholder={t('contact.form.placeholders.message')}
                     className="min-h-[120px]"
                     {...field}
                   />
@@ -155,7 +157,7 @@ export function ContactForm() {
             className="w-full"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Sending..." : "Send Message"}
+            {isSubmitting ? t('contact.form.submitting') : t('contact.form.submit')}
           </Button>
         </form>
       </Form>

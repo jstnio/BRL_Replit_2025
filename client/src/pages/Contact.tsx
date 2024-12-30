@@ -1,31 +1,34 @@
 import { motion } from "framer-motion";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { ContactForm } from "@/components/sections/ContactForm";
+import { useTranslation } from "react-i18next";
 
 const contactInfo = [
   {
     icon: MapPin,
-    title: "Address",
-    details: ["1234 Logistics Way", "Suite 100", "Los Angeles, CA 90001"],
+    titleKey: "contact.info.address.title",
+    details: ["contact.info.address.line1", "contact.info.address.line2", "contact.info.address.line3"],
   },
   {
     icon: Phone,
-    title: "Phone",
-    details: ["+1 (555) 123-4567", "+1 (555) 765-4321"],
+    titleKey: "contact.info.phone.title",
+    details: ["contact.info.phone.main", "contact.info.phone.support"],
   },
   {
     icon: Mail,
-    title: "Email",
-    details: ["contact@brlglobal.com", "support@brlglobal.com"],
+    titleKey: "contact.info.email.title",
+    details: ["contact.info.email.general", "contact.info.email.support"],
   },
   {
     icon: Clock,
-    title: "Business Hours",
-    details: ["Monday - Friday", "9:00 AM - 6:00 PM PST"],
+    titleKey: "contact.info.hours.title",
+    details: ["contact.info.hours.days", "contact.info.hours.time"],
   },
 ];
 
 export function Contact() {
+  const { t } = useTranslation();
+
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="container mx-auto px-4 py-16">
@@ -35,10 +38,9 @@ export function Contact() {
           transition={{ duration: 0.5 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <h1 className="text-4xl font-bold tracking-tight mb-4">Contact Us</h1>
+          <h1 className="text-4xl font-bold tracking-tight mb-4">{t('contact.title')}</h1>
           <p className="text-lg text-muted-foreground">
-            Get in touch with our team for any inquiries about our services
-            or to request a quote.
+            {t('contact.subtitle')}
           </p>
         </motion.div>
 
@@ -50,7 +52,7 @@ export function Contact() {
           <div className="space-y-8">
             {contactInfo.map((item, index) => (
               <motion.div
-                key={item.title}
+                key={item.titleKey}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
@@ -58,12 +60,12 @@ export function Contact() {
               >
                 <div className="flex items-center mb-4">
                   <item.icon className="h-6 w-6 text-primary mr-3" />
-                  <h3 className="font-semibold">{item.title}</h3>
+                  <h3 className="font-semibold">{t(item.titleKey)}</h3>
                 </div>
                 <div className="space-y-1">
                   {item.details.map((detail) => (
                     <p key={detail} className="text-muted-foreground">
-                      {detail}
+                      {t(detail)}
                     </p>
                   ))}
                 </div>

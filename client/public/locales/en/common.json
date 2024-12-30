@@ -64,6 +64,60 @@
       }
     }
   },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Get in touch with our team for any inquiries or support",
+    "info": {
+      "address": {
+        "title": "Address",
+        "line1": "1234 Logistics Way",
+        "line2": "Suite 100",
+        "line3": "Los Angeles, CA 90001"
+      },
+      "phone": {
+        "title": "Phone",
+        "main": "+1 (555) 123-4567",
+        "support": "+1 (555) 987-6543"
+      },
+      "email": {
+        "title": "Email",
+        "general": "contact@brlglobal.com",
+        "support": "support@brlglobal.com"
+      },
+      "hours": {
+        "title": "Business Hours",
+        "days": "Monday - Friday",
+        "time": "9:00 AM - 6:00 PM EST"
+      }
+    },
+    "form": {
+      "title": "Send us a Message",
+      "fields": {
+        "name": "Full Name",
+        "email": "Email Address",
+        "phone": "Phone Number",
+        "company": "Company Name",
+        "message": "Message"
+      },
+      "placeholders": {
+        "name": "Enter your full name",
+        "email": "Enter your email address",
+        "phone": "Enter your phone number",
+        "company": "Enter your company name",
+        "message": "How can we help you?"
+      },
+      "submit": "Send Message",
+      "submitting": "Sending...",
+      "success": {
+        "title": "Message Sent",
+        "message": "Thank you for contacting us. We'll get back to you shortly."
+      },
+      "error": {
+        "title": "Error",
+        "message": "There was an error sending your message. Please try again."
+      }
+    }
+  },
   "footer": {
     "description": "Your trusted partner in global freight forwarding and logistics solutions.",
     "services": {
