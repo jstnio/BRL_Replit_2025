@@ -3,31 +3,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
 import { QuoteIcon } from "lucide-react";
-
-const testimonials = [
-  {
-    quote: "BRL Global has transformed our logistics operations with their efficient and reliable services. Their global network and expertise have been invaluable to our business growth.",
-    author: "Sarah Johnson",
-    title: "Supply Chain Director",
-    company: "TechCorp International",
-  },
-  {
-    quote: "Outstanding service and professional team. BRL Global consistently delivers on their promises, making them our trusted partner for all shipping needs.",
-    author: "Michael Chen",
-    title: "Operations Manager",
-    company: "Global Innovations Ltd",
-  },
-  {
-    quote: "Their commitment to excellence and innovative solutions has significantly improved our shipping efficiency. BRL Global is a game-changer in the logistics industry.",
-    author: "Emma Rodriguez",
-    title: "Logistics Coordinator",
-    company: "Summit Enterprises",
-  },
-];
+import { useTranslation } from "react-i18next";
 
 export function TestimonialsCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const { t } = useTranslation();
+
+  const testimonials = t('testimonials.items', { returnObjects: true });
 
   useEffect(() => {
     if (!isAutoPlaying) return;
@@ -37,7 +20,7 @@ export function TestimonialsCarousel() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+  }, [isAutoPlaying, testimonials.length]);
 
   const slideVariants = {
     enter: (direction: number) => ({
@@ -72,10 +55,10 @@ export function TestimonialsCarousel() {
           className="text-center max-w-2xl mx-auto mb-16"
         >
           <h2 className="text-3xl font-bold tracking-tight">
-            What Our Clients Say
+            {t('testimonials.title')}
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Trusted by businesses worldwide for reliable logistics solutions
+            {t('testimonials.subtitle')}
           </p>
         </motion.div>
 

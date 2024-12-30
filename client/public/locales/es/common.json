@@ -176,5 +176,49 @@
       "email": "contact@brlglobal.com"
     },
     "copyright": "© {{year}} BRL Global. Todos los derechos reservados."
+  },
+  "features": {
+    "title": "¿Por Qué Elegir BRL Global?",
+    "subtitle": "Combinamos experiencia en la industria con tecnología innovadora para ofrecer soluciones logísticas superiores",
+    "globalNetwork": {
+      "name": "Red Global",
+      "description": "Acceso a una extensa red de socios y transportistas en todo el mundo"
+    },
+    "support": {
+      "name": "Soporte 24/7",
+      "description": "Atención al cliente y seguimiento de envíos las 24 horas"
+    },
+    "security": {
+      "name": "Manejo Seguro",
+      "description": "Medidas avanzadas de protección y seguridad de carga"
+    },
+    "analytics": {
+      "name": "Análisis de Datos",
+      "description": "Seguimiento en tiempo real y análisis de rendimiento"
+    }
+  },
+  "testimonials": {
+    "title": "Qué Dicen Nuestros Clientes",
+    "subtitle": "Confianza de empresas en todo el mundo por nuestras soluciones logísticas confiables",
+    "items": [
+      {
+        "quote": "BRL Global ha transformado nuestras operaciones logísticas con sus servicios eficientes y confiables. Su red global y experiencia han sido invaluables para el crecimiento de nuestro negocio.",
+        "author": "Sarah Johnson",
+        "title": "Directora de Cadena de Suministro",
+        "company": "TechCorp International"
+      },
+      {
+        "quote": "Servicio excepcional y equipo profesional. BRL Global cumple consistentemente sus promesas, convirtiéndolos en nuestro socio de confianza para todas las necesidades de envío.",
+        "author": "Michael Chen",
+        "title": "Gerente de Operaciones",
+        "company": "Global Innovations Ltd"
+      },
+      {
+        "quote": "Su compromiso con la excelencia y las soluciones innovadoras ha mejorado significativamente nuestra eficiencia logística. BRL Global es un factor de cambio en la industria logística.",
+        "author": "Emma Rodriguez",
+        "title": "Coordinadora de Logística",
+        "company": "Summit Enterprises"
+      }
+    ]
   }
 }

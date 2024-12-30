@@ -176,5 +176,49 @@
       "email": "contact@brlglobal.com"
     },
     "copyright": "© {{year}} BRL Global. All rights reserved."
+  },
+  "features": {
+    "title": "Why Choose BRL Global",
+    "subtitle": "We combine industry expertise with innovative technology to deliver superior logistics solutions",
+    "globalNetwork": {
+      "name": "Global Network",
+      "description": "Access to an extensive network of partners and carriers worldwide"
+    },
+    "support": {
+      "name": "24/7 Support",
+      "description": "Round-the-clock customer support and shipment tracking"
+    },
+    "security": {
+      "name": "Secure Handling",
+      "description": "Advanced cargo protection and security measures"
+    },
+    "analytics": {
+      "name": "Data Analytics",
+      "description": "Real-time tracking and performance analytics"
+    }
+  },
+  "testimonials": {
+    "title": "What Our Clients Say",
+    "subtitle": "Trusted by businesses worldwide for reliable logistics solutions",
+    "items": [
+      {
+        "quote": "BRL Global has transformed our logistics operations with their efficient and reliable services. Their global network and expertise have been invaluable to our business growth.",
+        "author": "Sarah Johnson",
+        "title": "Supply Chain Director",
+        "company": "TechCorp International"
+      },
+      {
+        "quote": "Outstanding service and professional team. BRL Global consistently delivers on their promises, making them our trusted partner for all shipping needs.",
+        "author": "Michael Chen",
+        "title": "Operations Manager",
+        "company": "Global Innovations Ltd"
+      },
+      {
+        "quote": "Their commitment to excellence and innovative solutions has significantly improved our shipping efficiency. BRL Global is a game-changer in the logistics industry.",
+        "author": "Emma Rodriguez",
+        "title": "Logistics Coordinator",
+        "company": "Summit Enterprises"
+      }
+    ]
   }
 }
