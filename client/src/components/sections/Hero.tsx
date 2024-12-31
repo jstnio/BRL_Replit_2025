@@ -32,7 +32,7 @@ export function Hero() {
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl mb-6 font-['Inter']">
             {t('hero.title')}
           </h1>
-          <div className="relative h-16 mb-6">
+          <div className="relative h-24 mb-8">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentService}
@@ -58,7 +58,7 @@ export function Hero() {
                 }}
                 className="absolute inset-0 flex items-center justify-center"
               >
-                <span className="text-3xl sm:text-5xl font-[200] bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text tracking-tight font-['Inter']">
+                <span className="text-4xl sm:text-6xl font-[600] bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text tracking-tight font-['Inter']">
                   {t(services[currentService])}
                 </span>
               </motion.div>
