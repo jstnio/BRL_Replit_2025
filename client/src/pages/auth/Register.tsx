@@ -7,13 +7,22 @@ import { z } from "zod";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   username: z.string().min(1, "Username is required"),
+  email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(1, "Please confirm your password"),
+  role: z.enum(["customer", "customs_broker", "international_agent", "trucker"]),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -21,17 +30,27 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
+const roles = [
+  { value: "customer", label: "Customer" },
+  { value: "customs_broker", label: "Customs Broker" },
+  { value: "international_agent", label: "International Agent" },
+  { value: "trucker", label: "Trucker" },
+];
+
 export function Register() {
   const [isLoading, setIsLoading] = useState(false);
   const [, navigate] = useLocation();
   const { t } = useTranslation();
+  const { toast } = useToast();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
+      email: "",
       password: "",
       confirmPassword: "",
+      role: "customer",
     },
   });
 
@@ -43,7 +62,9 @@ export function Register() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: data.username,
+          email: data.email,
           password: data.password,
+          role: data.role,
         }),
         credentials: "include",
       });
@@ -90,6 +111,47 @@ export function Register() {
                     <FormControl>
                       <Input {...field} disabled={isLoading} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("auth.register.email")}</FormLabel>
+                    <FormControl>
+                      <Input type="email" {...field} disabled={isLoading} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("auth.register.role")}</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={isLoading}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a role" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {roles.map((role) => (
+                          <SelectItem key={role.value} value={role.value}>
+                            {role.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
