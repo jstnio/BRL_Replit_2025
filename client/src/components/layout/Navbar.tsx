@@ -36,7 +36,9 @@ export function Navbar() {
     <nav className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/">
-          <img src="/assets/BRL.png" alt="BRL Global" className="h-8 w-auto" />
+          <a className="flex items-center">
+            <img src="../../../attached_assets/BRL.png" alt="BRL Global" className="h-8 w-auto" />
+          </a>
         </Link>
 
         {/* Desktop Navigation */}
