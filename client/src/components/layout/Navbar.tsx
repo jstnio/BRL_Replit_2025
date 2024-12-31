@@ -37,7 +37,15 @@ export function Navbar() {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center">
           <Link href="/">
-            <img src="/BRL_vector.png" alt="BRL Global" className="h-8 w-auto" />
+            <a className="flex items-center">
+              <img 
+                src="/BRL_vector.png" 
+                alt="BRL Global" 
+                className="h-8 w-auto object-contain"
+                loading="eager"
+                style={{ maxWidth: '200px' }}
+              />
+            </a>
           </Link>
         </div>
 
