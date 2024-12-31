@@ -57,8 +57,9 @@ export function Hero() {
                   opacity: { duration: 0.3 }
                 }}
                 className="absolute inset-0 flex items-center justify-center"
+                style={{ perspective: "1000px", transformStyle: "preserve-3d" }}
               >
-                <span className="text-4xl sm:text-6xl font-[600] bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text tracking-tight font-['Inter']">
+                <span className="text-4xl sm:text-6xl font-[600] bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text tracking-tight font-['Inter'] py-4 px-6">
                   {t(services[currentService])}
                 </span>
               </motion.div>
