@@ -36,20 +36,20 @@ export function Navbar() {
     <nav className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/">
-          <img src="/images/BRL.png" alt="BRL Global" className="h-8 w-auto" />
+          <img src="/assets/BRL.png" alt="BRL Global" className="h-8 w-auto" />
         </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-8">
           {navItems.map((item) => (
             <Link key={item.href} href={item.href}>
-              <a
-                className={`text-sm font-medium transition-colors hover:text-primary ${
+              <span
+                className={`text-sm font-medium transition-colors hover:text-primary cursor-pointer ${
                   location === item.href ? "text-primary" : "text-muted-foreground"
                 }`}
               >
                 {t(item.label)}
-              </a>
+              </span>
             </Link>
           ))}
           <DropdownMenu>
@@ -88,16 +88,16 @@ export function Navbar() {
             <nav className="flex flex-col gap-4 mt-8">
               {navItems.map((item) => (
                 <Link key={item.href} href={item.href}>
-                  <a
+                  <span
                     onClick={() => setIsOpen(false)}
-                    className={`text-lg font-medium transition-colors hover:text-primary ${
+                    className={`text-lg font-medium transition-colors hover:text-primary cursor-pointer ${
                       location === item.href
                         ? "text-primary"
                         : "text-muted-foreground"
                     }`}
                   >
                     {t(item.label)}
-                  </a>
+                  </span>
                 </Link>
               ))}
               <div className="flex flex-col gap-2 mt-4">
