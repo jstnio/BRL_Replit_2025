@@ -4,7 +4,9 @@
     "services": "Servicios",
     "about": "Nosotros",
     "contact": "Contacto",
-    "getQuote": "Cotizar"
+    "getQuote": "Cotizar",
+    "login": "Iniciar Sesión",
+    "register": "Registrarse"
   },
   "hero": {
     "title": "Soluciones Logísticas Globales para Negocios Modernos",

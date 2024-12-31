@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, X, Globe } from "lucide-react";
+import { Menu, X, Globe, UserCircle2 } from "lucide-react";
 
 const navItems = [
   { label: "nav.home", href: "/" },
@@ -77,7 +77,15 @@ export function Navbar() {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button>{t('nav.getQuote')}</Button>
+          <div className="flex items-center gap-2">
+            <Link href="/auth/login">
+              <Button variant="ghost">{t('nav.login')}</Button>
+            </Link>
+            <Link href="/auth/register">
+              <Button variant="ghost">{t('nav.register')}</Button>
+            </Link>
+            <Button>{t('nav.getQuote')}</Button>
+          </div>
         </div>
 
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -120,7 +128,29 @@ export function Navbar() {
                   </Button>
                 ))}
               </div>
-              <Button className="mt-4">{t('nav.getQuote')}</Button>
+              <div className="flex flex-col gap-2 mt-4">
+                <Link href="/auth/login">
+                  <Button
+                    variant="ghost"
+                    className="w-full"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {t('nav.login')}
+                  </Button>
+                </Link>
+                <Link href="/auth/register">
+                  <Button
+                    variant="ghost"
+                    className="w-full"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {t('nav.register')}
+                  </Button>
+                </Link>
+                <Button className="w-full" onClick={() => setIsOpen(false)}>
+                  {t('nav.getQuote')}
+                </Button>
+              </div>
             </nav>
           </SheetContent>
         </Sheet>

@@ -4,7 +4,9 @@
     "services": "Services",
     "about": "About",
     "contact": "Contact",
-    "getQuote": "Get Quote"
+    "getQuote": "Get Quote",
+    "login": "Login",
+    "register": "Register"
   },
   "hero": {
     "title": "Global Logistics Solutions for Modern Business",
