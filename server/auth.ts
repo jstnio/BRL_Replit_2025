@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { type Express } from "express";
+import { type Express, type Request, type Response, type NextFunction } from "express";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 import { db } from "@db";
@@ -16,10 +16,10 @@ declare global {
       username: string;
       email: string;
       roleId: number;
-      role?: {
+      role: {
         name: string;
-        description: string;
-      };
+        description: string | null;
+      } | null;
     }
   }
 }
@@ -30,7 +30,10 @@ export function setupAuth(app: Express) {
     secret: process.env.REPL_ID || "brl-global-secret",
     resave: false,
     saveUninitialized: false,
-    cookie: {},
+    cookie: {
+      secure: app.get("env") === "production",
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
     store: new MemoryStore({
       checkPeriod: 86400000, // prune expired entries every 24h
     }),
@@ -38,9 +41,6 @@ export function setupAuth(app: Express) {
 
   if (app.get("env") === "production") {
     app.set("trust proxy", 1);
-    sessionSettings.cookie = {
-      secure: true,
-    };
   }
 
   app.use(session(sessionSettings));
@@ -111,6 +111,10 @@ export function setupAuth(app: Express) {
         .where(eq(users.id, id))
         .limit(1);
 
+      if (!user) {
+        return done(null, false);
+      }
+
       done(null, user);
     } catch (error) {
       done(error);
@@ -118,7 +122,7 @@ export function setupAuth(app: Express) {
   });
 
   // Middleware to check if user is authenticated
-  const isAuthenticated = (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
+  const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
     if (req.isAuthenticated()) {
       return next();
     }
@@ -127,7 +131,7 @@ export function setupAuth(app: Express) {
 
   // Middleware to check user role
   const hasRole = (roleNames: string[]) => {
-    return (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
+    return (req: Request, res: Response, next: NextFunction) => {
       if (!req.user?.role) {
         return res.status(403).send("Forbidden");
       }
@@ -201,7 +205,7 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/auth/login", (req, res, next) => {
-    passport.authenticate("local", (err, user, info) => {
+    passport.authenticate("local", (err: any, user: Express.User | false, info: any) => {
       if (err) {
         return next(err);
       }
