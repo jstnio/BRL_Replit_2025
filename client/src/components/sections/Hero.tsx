@@ -16,7 +16,7 @@ export function Hero() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentService((current) => (current + 1) % services.length);
-    }, 2000);
+    }, 3000); // Increased duration for better readability
     return () => clearInterval(interval);
   }, []);
 
@@ -26,32 +26,52 @@ export function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-center max-w-3xl mx-auto"
         >
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl mb-4">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl mb-6">
             {t('hero.title')}
           </h1>
-          <div className="h-12 mb-4">
+          <div className="relative h-16 mb-6">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentService}
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -20, opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-2xl sm:text-4xl font-semibold text-primary"
+                initial={{ 
+                  opacity: 0,
+                  y: 40,
+                  rotateX: -90
+                }}
+                animate={{ 
+                  opacity: 1,
+                  y: 0,
+                  rotateX: 0
+                }}
+                exit={{ 
+                  opacity: 0,
+                  y: -40,
+                  rotateX: 90
+                }}
+                transition={{ 
+                  duration: 0.6,
+                  ease: [0.23, 1, 0.32, 1],
+                  opacity: { duration: 0.3 }
+                }}
+                className="absolute inset-0 flex items-center justify-center"
               >
-                {t(services[currentService])}
+                <span className="text-3xl sm:text-5xl font-semibold bg-gradient-to-r from-primary to-purple-600 text-transparent bg-clip-text">
+                  {t(services[currentService])}
+                </span>
               </motion.div>
             </AnimatePresence>
           </div>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
+          <p className="mt-8 text-lg leading-8 text-gray-600">
             {t('hero.subtitle')}
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Button size="lg">{t('hero.cta.primary')}</Button>
-            <Button size="lg" variant="outline">
+            <Button size="lg" className="min-w-[150px]">
+              {t('hero.cta.primary')}
+            </Button>
+            <Button size="lg" variant="outline" className="min-w-[150px]">
               {t('hero.cta.secondary')}
             </Button>
           </div>
