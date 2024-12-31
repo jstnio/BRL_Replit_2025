@@ -16,7 +16,7 @@ export function Hero() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentService((current) => (current + 1) % services.length);
-    }, 3000); // Increased duration for better readability
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
 
@@ -29,7 +29,7 @@ export function Hero() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-center max-w-3xl mx-auto"
         >
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl mb-6">
+          <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-6xl mb-6 font-sans">
             {t('hero.title')}
           </h1>
           <div className="relative h-16 mb-6">
@@ -58,20 +58,20 @@ export function Hero() {
                 }}
                 className="absolute inset-0 flex items-center justify-center"
               >
-                <span className="text-3xl sm:text-5xl font-semibold bg-gradient-to-r from-primary to-purple-600 text-transparent bg-clip-text">
+                <span className="text-3xl sm:text-5xl font-light bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text tracking-tight">
                   {t(services[currentService])}
                 </span>
               </motion.div>
             </AnimatePresence>
           </div>
-          <p className="mt-8 text-lg leading-8 text-gray-600">
+          <p className="mt-8 text-lg leading-8 text-gray-600 font-light">
             {t('hero.subtitle')}
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Button size="lg" className="min-w-[150px]">
+            <Button size="lg" className="min-w-[150px] font-medium">
               {t('hero.cta.primary')}
             </Button>
-            <Button size="lg" variant="outline" className="min-w-[150px]">
+            <Button size="lg" variant="outline" className="min-w-[150px] font-medium">
               {t('hero.cta.secondary')}
             </Button>
           </div>
