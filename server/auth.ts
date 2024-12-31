@@ -121,29 +121,6 @@ export function setupAuth(app: Express) {
     }
   });
 
-  // Middleware to check if user is authenticated
-  const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
-    if (req.isAuthenticated()) {
-      return next();
-    }
-    res.status(401).send("Not authenticated");
-  };
-
-  // Middleware to check user role
-  const hasRole = (roleNames: string[]) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-      if (!req.user?.role) {
-        return res.status(403).send("Forbidden");
-      }
-
-      if (roleNames.includes(req.user.role.name)) {
-        return next();
-      }
-
-      res.status(403).send("Forbidden");
-    };
-  };
-
   // Auth routes
   app.post("/api/auth/register", async (req, res) => {
     try {
@@ -176,8 +153,9 @@ export function setupAuth(app: Express) {
         return res.status(400).send("Invalid role");
       }
 
-      // Hash password
-      const hashedPassword = await bcrypt.hash(password, 10);
+      // Hash password with bcrypt
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
 
       // Create user
       const [newUser] = await db
@@ -250,7 +228,24 @@ export function setupAuth(app: Express) {
   });
 
   return {
-    isAuthenticated,
-    hasRole,
+    isAuthenticated: (req: Request, res: Response, next: NextFunction) => {
+      if (req.isAuthenticated()) {
+        return next();
+      }
+      res.status(401).send("Not authenticated");
+    },
+    hasRole: (roleNames: string[]) => {
+      return (req: Request, res: Response, next: NextFunction) => {
+        if (!req.user?.role) {
+          return res.status(403).send("Forbidden");
+        }
+
+        if (roleNames.includes(req.user.role.name)) {
+          return next();
+        }
+
+        res.status(403).send("Forbidden");
+      };
+    },
   };
 }
