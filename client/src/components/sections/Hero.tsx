@@ -29,10 +29,10 @@ export function Hero() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-center max-w-3xl mx-auto"
         >
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl mb-4 font-['Inter']">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl mb-2 font-['Inter']">
             {t('hero.title')}
           </h1>
-          <div className="relative h-24 mb-2">
+          <div className="relative h-24 mb-1">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentService}
@@ -65,7 +65,7 @@ export function Hero() {
               </motion.div>
             </AnimatePresence>
           </div>
-          <p className="mt-4 text-lg leading-8 text-gray-600 font-[300] font-['Inter']">
+          <p className="mt-2 text-lg leading-8 text-gray-600 font-[300] font-['Inter']">
             {t('hero.subtitle')}
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
