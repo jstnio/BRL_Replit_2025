@@ -36,20 +36,17 @@ export function Navbar() {
     <nav className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center">
-          <Link href="/">
-            <a className="flex items-center">
-              <img 
-                src="/BRL_vector.png" 
-                alt="BRL Global" 
-                className="h-8 w-auto object-contain"
-                loading="eager"
-                style={{ maxWidth: '200px' }}
-              />
-            </a>
+          <Link href="/" className="flex items-center">
+            <img 
+              src="/BRL_vector.png" 
+              alt="BRL Global" 
+              className="h-8 w-auto object-contain"
+              loading="eager"
+              style={{ maxWidth: '200px' }}
+            />
           </Link>
         </div>
 
-        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-8">
           {navItems.map((item) => (
             <Link key={item.href} href={item.href}>
@@ -83,7 +80,6 @@ export function Navbar() {
           <Button>{t('nav.getQuote')}</Button>
         </div>
 
-        {/* Mobile Navigation */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild className="md:hidden">
             <Button variant="ghost" size="icon">
