@@ -2,31 +2,153 @@ import { pgTable, text, serial, integer, boolean, timestamp, foreignKey, jsonb }
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
 
-// Users table for authentication
+// User roles enum as a lookup table
+export const roles = pgTable("roles", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  description: text("description"),
+});
+
+// Users table with enhanced security and role support
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").unique().notNull(),
   password: text("password").notNull(),
-  role: text("role").notNull().default("client"),
+  email: text("email").unique().notNull(),
+  roleId: integer("role_id").references(() => roles.id).notNull(),
+  active: boolean("active").default(true).notNull(),
+  lastLogin: timestamp("last_login"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-// Client businesses
-export const clients = pgTable("clients", {
+// Admins - additional admin-specific fields
+export const admins = pgTable("admins", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id).notNull(),
-  businessName: text("business_name").notNull(),
+  accessLevel: text("access_level").notNull(),
+  canManageUsers: boolean("can_manage_users").default(false).notNull(),
+});
+
+// Employees - internal staff
+export const employees = pgTable("employees", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  department: text("department").notNull(),
+  position: text("position").notNull(),
+  employeeId: text("employee_id").unique().notNull(),
+});
+
+// Customers - shipping clients
+export const customers = pgTable("customers", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  companyName: text("company_name"),
   contactPerson: text("contact_person").notNull(),
-  email: text("email").notNull(),
   phone: text("phone").notNull(),
   address: text("address").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  taxId: text("tax_id"),
 });
+
+// Customs Brokers
+export const customsBrokers = pgTable("customs_brokers", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  licenseNumber: text("license_number").unique().notNull(),
+  jurisdiction: text("jurisdiction").notNull(),
+  specializations: text("specializations").array().notNull(),
+});
+
+// International Agents
+export const internationalAgents = pgTable("international_agents", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  agencyName: text("agency_name").notNull(),
+  country: text("country").notNull(),
+  servicesOffered: text("services_offered").array().notNull(),
+});
+
+// Truckers
+export const truckers = pgTable("truckers", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  driverLicense: text("driver_license").unique().notNull(),
+  vehicleType: text("vehicle_type").notNull(),
+  availabilityStatus: text("availability_status").notNull(),
+});
+
+// Define relationships
+export const userRelations = relations(users, ({ one }) => ({
+  role: one(roles, {
+    fields: [users.roleId],
+    references: [roles.id],
+  }),
+  admin: one(admins, {
+    fields: [users.id],
+    references: [admins.userId],
+  }),
+  employee: one(employees, {
+    fields: [users.id],
+    references: [employees.userId],
+  }),
+  customer: one(customers, {
+    fields: [users.id],
+    references: [customers.userId],
+  }),
+  customsBroker: one(customsBrokers, {
+    fields: [users.id],
+    references: [customsBrokers.userId],
+  }),
+  internationalAgent: one(internationalAgents, {
+    fields: [users.id],
+    references: [internationalAgents.userId],
+  }),
+  trucker: one(truckers, {
+    fields: [users.id],
+    references: [truckers.userId],
+  }),
+}));
+
+// Create Zod schemas for validation
+export const insertRoleSchema = createInsertSchema(roles);
+export const selectRoleSchema = createSelectSchema(roles);
+export const insertUserSchema = createInsertSchema(users);
+export const selectUserSchema = createSelectSchema(users);
+export const insertAdminSchema = createInsertSchema(admins);
+export const selectAdminSchema = createSelectSchema(admins);
+export const insertEmployeeSchema = createInsertSchema(employees);
+export const selectEmployeeSchema = createSelectSchema(employees);
+export const insertCustomerSchema = createInsertSchema(customers);
+export const selectCustomerSchema = createSelectSchema(customers);
+export const insertCustomsBrokerSchema = createInsertSchema(customsBrokers);
+export const selectCustomsBrokerSchema = createSelectSchema(customsBrokers);
+export const insertInternationalAgentSchema = createInsertSchema(internationalAgents);
+export const selectInternationalAgentSchema = createSelectSchema(internationalAgents);
+export const insertTruckerSchema = createInsertSchema(truckers);
+export const selectTruckerSchema = createSelectSchema(truckers);
+
+// TypeScript types
+export type Role = typeof roles.$inferSelect;
+export type InsertRole = typeof roles.$inferInsert;
+export type User = typeof users.$inferSelect;
+export type InsertUser = typeof users.$inferInsert;
+export type Admin = typeof admins.$inferSelect;
+export type InsertAdmin = typeof admins.$inferInsert;
+export type Employee = typeof employees.$inferSelect;
+export type InsertEmployee = typeof employees.$inferInsert;
+export type Customer = typeof customers.$inferSelect;
+export type InsertCustomer = typeof customers.$inferInsert;
+export type CustomsBroker = typeof customsBrokers.$inferSelect;
+export type InsertCustomsBroker = typeof customsBrokers.$inferInsert;
+export type InternationalAgent = typeof internationalAgents.$inferSelect;
+export type InsertInternationalAgent = typeof internationalAgents.$inferInsert;
+export type Trucker = typeof truckers.$inferSelect;
+export type InsertTrucker = typeof truckers.$inferInsert;
 
 // Shipments
 export const shipments = pgTable("shipments", {
   id: serial("id").primaryKey(),
-  clientId: integer("client_id").references(() => clients.id).notNull(),
+  clientId: integer("client_id").references(() => customers.id).notNull(),
   trackingNumber: text("tracking_number").unique().notNull(),
   status: text("status").notNull().default("pending"),
   origin: text("origin").notNull(),
@@ -38,6 +160,7 @@ export const shipments = pgTable("shipments", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
 
 // Shipping Documents
 export const documents = pgTable("documents", {
@@ -58,27 +181,10 @@ export const sessions = pgTable("sessions", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// Define relationships
-export const userRelations = relations(users, ({ one, many }) => ({
-  client: one(clients, {
-    fields: [users.id],
-    references: [clients.id],
-  }),
-  sessions: many(sessions),
-}));
-
-export const clientRelations = relations(clients, ({ one, many }) => ({
-  user: one(users, {
-    fields: [clients.userId],
-    references: [users.id],
-  }),
-  shipments: many(shipments),
-}));
-
 export const shipmentRelations = relations(shipments, ({ one, many }) => ({
-  client: one(clients, {
+  client: one(customers, {
     fields: [shipments.clientId],
-    references: [clients.id],
+    references: [customers.id],
   }),
   documents: many(documents),
 }));
@@ -90,11 +196,6 @@ export const documentRelations = relations(documents, ({ one }) => ({
   }),
 }));
 
-// Zod schemas for type validation
-export const insertUserSchema = createInsertSchema(users);
-export const selectUserSchema = createSelectSchema(users);
-export const insertClientSchema = createInsertSchema(clients);
-export const selectClientSchema = createSelectSchema(clients);
 export const insertShipmentSchema = createInsertSchema(shipments);
 export const selectShipmentSchema = createSelectSchema(shipments);
 export const insertDocumentSchema = createInsertSchema(documents);
@@ -102,11 +203,6 @@ export const selectDocumentSchema = createSelectSchema(documents);
 export const insertSessionSchema = createInsertSchema(sessions);
 export const selectSessionSchema = createSelectSchema(sessions);
 
-// TypeScript types
-export type InsertUser = typeof users.$inferInsert;
-export type SelectUser = typeof users.$inferSelect;
-export type InsertClient = typeof clients.$inferInsert;
-export type SelectClient = typeof clients.$inferSelect;
 export type InsertShipment = typeof shipments.$inferInsert;
 export type SelectShipment = typeof shipments.$inferSelect;
 export type InsertDocument = typeof documents.$inferInsert;
