@@ -58,12 +58,12 @@ export function Navbar() {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center">
           <Link href="/" className="flex items-center">
-            <img 
-              src="/BRL_vector.png" 
-              alt="BRL Global" 
+            <img
+              src="/BRL_vector.png"
+              alt="BRL Global"
               className="h-8 w-auto object-contain"
               loading="eager"
-              style={{ maxWidth: '200px' }}
+              style={{ maxWidth: "200px" }}
             />
           </Link>
         </div>
@@ -102,8 +102,11 @@ export function Navbar() {
             {user ? (
               <>
                 <span className="text-sm font-medium text-muted-foreground">
-                  {user.username}
+                  {user.username} ({user.role?.name})
                 </span>
+                <Link href="/dashboard">
+                  <Button variant="ghost">{t('nav.dashboard')}</Button>
+                </Link>
                 <Button variant="ghost" onClick={handleLogout}>
                   <LogOut className="h-4 w-4 mr-2" />
                   {t('nav.logout')}
@@ -167,8 +170,17 @@ export function Navbar() {
                 {user ? (
                   <>
                     <span className="text-sm font-medium text-muted-foreground">
-                      {user.username}
+                      {user.username} ({user.role?.name})
                     </span>
+                    <Link href="/dashboard">
+                      <Button
+                        variant="ghost"
+                        className="w-full"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        {t('nav.dashboard')}
+                      </Button>
+                    </Link>
                     <Button
                       variant="ghost"
                       onClick={() => {
