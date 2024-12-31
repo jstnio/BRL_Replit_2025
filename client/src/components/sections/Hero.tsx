@@ -32,7 +32,7 @@ export function Hero() {
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl mb-6 font-['Inter']">
             {t('hero.title')}
           </h1>
-          <div className="relative h-24 mb-8">
+          <div className="relative h-32 mb-8">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentService}
