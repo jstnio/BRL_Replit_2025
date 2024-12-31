@@ -9,7 +9,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, X, Globe, UserCircle2 } from "lucide-react";
+import { Menu, X, Globe, LogOut } from "lucide-react";
+import { useUser } from "@/hooks/use-user";
+import { useToast } from "@/hooks/use-toast";
 
 const navItems = [
   { label: "nav.home", href: "/" },
@@ -25,11 +27,30 @@ const languages = [
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const { t, i18n } = useTranslation();
+  const { user, logout } = useUser();
+  const { toast } = useToast();
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast({
+        title: t("auth.logout.success.title"),
+        description: t("auth.logout.success.message"),
+      });
+      navigate("/");
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: t("auth.logout.error.title"),
+        description: t("auth.logout.error.message"),
+      });
+    }
   };
 
   return (
@@ -78,12 +99,26 @@ export function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
           <div className="flex items-center gap-2">
-            <Link href="/auth/login">
-              <Button variant="ghost">{t('nav.login')}</Button>
-            </Link>
-            <Link href="/auth/register">
-              <Button variant="ghost">{t('nav.register')}</Button>
-            </Link>
+            {user ? (
+              <>
+                <span className="text-sm font-medium text-muted-foreground">
+                  {user.username}
+                </span>
+                <Button variant="ghost" onClick={handleLogout}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  {t('nav.logout')}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/auth/login">
+                  <Button variant="ghost">{t('nav.login')}</Button>
+                </Link>
+                <Link href="/auth/register">
+                  <Button variant="ghost">{t('nav.register')}</Button>
+                </Link>
+              </>
+            )}
             <Button>{t('nav.getQuote')}</Button>
           </div>
         </div>
@@ -129,24 +164,44 @@ export function Navbar() {
                 ))}
               </div>
               <div className="flex flex-col gap-2 mt-4">
-                <Link href="/auth/login">
-                  <Button
-                    variant="ghost"
-                    className="w-full"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {t('nav.login')}
-                  </Button>
-                </Link>
-                <Link href="/auth/register">
-                  <Button
-                    variant="ghost"
-                    className="w-full"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {t('nav.register')}
-                  </Button>
-                </Link>
+                {user ? (
+                  <>
+                    <span className="text-sm font-medium text-muted-foreground">
+                      {user.username}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        handleLogout();
+                        setIsOpen(false);
+                      }}
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      {t('nav.logout')}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/auth/login">
+                      <Button
+                        variant="ghost"
+                        className="w-full"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        {t('nav.login')}
+                      </Button>
+                    </Link>
+                    <Link href="/auth/register">
+                      <Button
+                        variant="ghost"
+                        className="w-full"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        {t('nav.register')}
+                      </Button>
+                    </Link>
+                  </>
+                )}
                 <Button className="w-full" onClick={() => setIsOpen(false)}>
                   {t('nav.getQuote')}
                 </Button>

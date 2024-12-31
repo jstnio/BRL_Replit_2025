@@ -6,7 +6,8 @@
     "contact": "Contacto",
     "getQuote": "Cotizar",
     "login": "Iniciar Sesión",
-    "register": "Registrarse"
+    "register": "Registrarse",
+    "logout": "Cerrar Sesión"
   },
   "auth": {
     "login": {
@@ -40,6 +41,16 @@
       "error": {
         "title": "Error de registro",
         "message": "No se pudo crear la cuenta. Por favor, intente de nuevo."
+      }
+    },
+    "logout": {
+      "success": {
+        "title": "Sesión cerrada",
+        "message": "Has cerrado sesión correctamente."
+      },
+      "error": {
+        "title": "Error",
+        "message": "Hubo un error al cerrar sesión. Por favor, intente de nuevo."
       }
     }
   },
