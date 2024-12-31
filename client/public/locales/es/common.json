@@ -8,6 +8,41 @@
     "login": "Iniciar Sesión",
     "register": "Registrarse"
   },
+  "auth": {
+    "login": {
+      "title": "Iniciar Sesión",
+      "description": "Ingrese sus credenciales para acceder al portal de clientes",
+      "username": "Usuario",
+      "password": "Contraseña",
+      "submit": "Iniciar Sesión",
+      "loading": "Iniciando sesión...",
+      "success": {
+        "title": "¡Bienvenido de nuevo!",
+        "message": "Has iniciado sesión correctamente."
+      },
+      "error": {
+        "title": "Error de inicio de sesión",
+        "message": "Usuario o contraseña inválidos. Por favor, intente de nuevo."
+      }
+    },
+    "register": {
+      "title": "Crear una Cuenta",
+      "description": "Regístrese para acceder a nuestro portal de clientes",
+      "username": "Usuario",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar Contraseña",
+      "submit": "Registrarse",
+      "loading": "Creando cuenta...",
+      "success": {
+        "title": "Registro exitoso",
+        "message": "Su cuenta ha sido creada. Por favor, inicie sesión."
+      },
+      "error": {
+        "title": "Error de registro",
+        "message": "No se pudo crear la cuenta. Por favor, intente de nuevo."
+      }
+    }
+  },
   "hero": {
     "title": "Soluciones Logísticas Globales para Negocios Modernos",
     "subtitle": "BRL Global ofrece servicios de transporte y logística sin problemas por mar, aire y tierra. Conectamos empresas en todo el mundo con soluciones de envío confiables y eficientes.",

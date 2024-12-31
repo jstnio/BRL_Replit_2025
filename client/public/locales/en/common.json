@@ -8,6 +8,41 @@
     "login": "Login",
     "register": "Register"
   },
+  "auth": {
+    "login": {
+      "title": "Login to Your Account",
+      "description": "Enter your credentials to access the client portal",
+      "username": "Username",
+      "password": "Password",
+      "submit": "Login",
+      "loading": "Logging in...",
+      "success": {
+        "title": "Welcome back!",
+        "message": "You have successfully logged in."
+      },
+      "error": {
+        "title": "Login failed",
+        "message": "Invalid username or password. Please try again."
+      }
+    },
+    "register": {
+      "title": "Create an Account",
+      "description": "Sign up for access to our client portal",
+      "username": "Username",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "submit": "Register",
+      "loading": "Creating account...",
+      "success": {
+        "title": "Registration successful",
+        "message": "Your account has been created. Please log in."
+      },
+      "error": {
+        "title": "Registration failed",
+        "message": "Unable to create account. Please try again."
+      }
+    }
+  },
   "hero": {
     "title": "Global Logistics Solutions for Modern Business",
     "subtitle": "BRL Global delivers seamless freight forwarding and logistics services across sea, air, and land. We connect businesses worldwide with reliable, efficient shipping solutions.",
