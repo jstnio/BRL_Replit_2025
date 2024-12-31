@@ -8,8 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { toast } from "@/components/ui/use-toast";
-import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/hooks/use-user";
 
 const formSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -22,7 +22,8 @@ export function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [, navigate] = useLocation();
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
+  const { login } = useUser();
+  const { toast } = useToast();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -35,29 +36,11 @@ export function Login() {
   async function onSubmit(data: FormData) {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error);
-      }
-
-      const userData = await response.json();
-
-      // Immediately update the user data in React Query cache
-      await queryClient.invalidateQueries({ queryKey: ['user'] });
-
+      await login(data);
       toast({
         title: t("auth.login.success.title"),
         description: t("auth.login.success.message"),
       });
-
-      // Redirect to dashboard or home page after successful login
       navigate("/");
     } catch (error: any) {
       toast({

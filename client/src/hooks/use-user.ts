@@ -22,10 +22,31 @@ export function useUser() {
   const { data: user, isLoading } = useQuery({
     queryKey: ['user'],
     queryFn: fetchUser,
+    staleTime: 0,
+    cacheTime: 0,
     retry: false,
     refetchOnWindowFocus: true,
-    refetchOnMount: true,
-    staleTime: 0
+    refetchOnMount: true
+  });
+
+  const loginMutation = useMutation({
+    mutationFn: async (credentials: { username: string; password: string }) => {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials),
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+    },
   });
 
   const logoutMutation = useMutation({
@@ -50,6 +71,7 @@ export function useUser() {
   return {
     user,
     isLoading,
+    login: loginMutation.mutateAsync,
     logout: logoutMutation.mutateAsync,
   };
 }
