@@ -22,8 +22,10 @@ export function useUser() {
   const { data: user, isLoading } = useQuery({
     queryKey: ['user'],
     queryFn: fetchUser,
-    staleTime: Infinity,
     retry: false,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    staleTime: 0
   });
 
   const logoutMutation = useMutation({
@@ -40,6 +42,7 @@ export function useUser() {
       return response.json();
     },
     onSuccess: () => {
+      queryClient.setQueryData(['user'], null);
       queryClient.invalidateQueries({ queryKey: ['user'] });
     },
   });

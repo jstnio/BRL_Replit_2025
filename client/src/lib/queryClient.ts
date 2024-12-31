@@ -19,8 +19,8 @@ export const queryClient = new QueryClient({
         return res.json();
       },
       refetchInterval: false,
-      refetchOnWindowFocus: false,
-      staleTime: 0, 
+      refetchOnWindowFocus: true,
+      staleTime: 0,
       retry: false,
     },
     mutations: {
