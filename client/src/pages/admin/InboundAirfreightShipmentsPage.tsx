@@ -767,8 +767,12 @@ export function InboundAirfreightShipmentsPage() {
                 <TableRow key={shipment.id}>
                   <TableCell>{shipment.hawb}</TableCell>
                   <TableCell>{shipment.flightNumber}</TableCell>
-                  <TableCell>{shipment.originAirport?.iataCode}</TableCell>
-                  <TableCell>{shipment.destinationAirport?.iataCode}</TableCell>
+                  <TableCell>
+                    {shipment.originAirport?.iataCode} - {shipment.originAirport?.city} ({shipment.originAirport?.country})
+                  </TableCell>
+                  <TableCell>
+                    {shipment.destinationAirport?.iataCode} - {shipment.destinationAirport?.city} ({shipment.destinationAirport?.country})
+                  </TableCell>
                   <TableCell>{shipment.status}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">

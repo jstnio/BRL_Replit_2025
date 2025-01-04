@@ -639,8 +639,71 @@ export function registerRoutes(app: Express): Server {
   app.get("/api/admin/airfreight/inbound", isAuthenticated, hasRole(["admin"]), async (req, res) => {
     try {
       const allShipments = await db
-        .select()
+        .select({
+          id: inboundAirfreightShipments.id,
+          brlReference: inboundAirfreightShipments.brlReference,
+          shipper: customers,
+          consignee: {
+            id: customers.id,
+            companyName: customers.companyName,
+          },
+          internationalAgent: {
+            id: internationalAgents.id,
+            companyName: internationalAgents.companyName,
+          },
+          airline: {
+            id: airlines.id,
+            name: airlines.name,
+            iataCode: airlines.iataCode,
+          },
+          originAirport: {
+            id: airports.id,
+            name: airports.name,
+            iataCode: airports.iataCode,
+            city: airports.city,
+            country: airports.country,
+          },
+          destinationAirport: {
+            id: airports.id,
+            name: airports.name,
+            iataCode: airports.iataCode,
+            city: airports.city,
+            country: airports.country,
+          },
+          customsBroker: {
+            id: customsBrokers.id,
+            companyName: customsBrokers.companyName,
+          },
+          trucker: {
+            id: truckers.id,
+            companyName: truckers.companyName,
+          },
+          hawb: inboundAirfreightShipments.hawb,
+          mawb: inboundAirfreightShipments.mawb,
+          flightNumber: inboundAirfreightShipments.flightNumber,
+          departureDate: inboundAirfreightShipments.departureDate,
+          arrivalDate: inboundAirfreightShipments.arrivalDate,
+          pieces: inboundAirfreightShipments.pieces,
+          weight: inboundAirfreightShipments.weight,
+          volume: inboundAirfreightShipments.volume,
+          goodsDescription: inboundAirfreightShipments.goodsDescription,
+          perishableCargo: inboundAirfreightShipments.perishableCargo,
+          dangerousCargo: inboundAirfreightShipments.dangerousCargo,
+          status: inboundAirfreightShipments.status,
+          customsClearanceStatus: inboundAirfreightShipments.customsClearanceStatus,
+          createdAt: inboundAirfreightShipments.createdAt,
+          updatedAt: inboundAirfreightShipments.updatedAt,
+          notes: inboundAirfreightShipments.notes,
+        })
         .from(inboundAirfreightShipments)
+        .leftJoin(customers, eq(inboundAirfreightShipments.shipperId, customers.id))
+        .leftJoin(customers, eq(inboundAirfreightShipments.consigneeId, customers.id))
+        .leftJoin(internationalAgents, eq(inboundAirfreightShipments.internationalAgentId, internationalAgents.id))
+        .leftJoin(airlines, eq(inboundAirfreightShipments.airlineId, airlines.id))
+        .leftJoin(airports, eq(inboundAirfreightShipments.originAirportId, airports.id))
+        .leftJoin(airports, eq(inboundAirfreightShipments.destinationAirportId, airports.id))
+        .leftJoin(customsBrokers, eq(inboundAirfreightShipments.customsBrokerId, customsBrokers.id))
+        .leftJoin(truckers, eq(inboundAirfreightShipments.truckerId, truckers.id))
         .orderBy(inboundAirfreightShipments.createdAt);
       res.json(allShipments);
     } catch (error: any) {
