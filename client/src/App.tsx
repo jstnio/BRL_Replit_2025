@@ -18,6 +18,7 @@ import { OceanCarriersPage } from "./pages/admin/OceanCarriersPage";
 import { DocumentsPage } from "./pages/admin/DocumentsPage";
 import { PortsPage } from "./pages/admin/PortsPage";
 import { CountriesPage } from "./pages/admin/CountriesPage";
+import { CustomersPage } from "./pages/admin/CustomersPage";
 
 function App() {
   const { user, isLoading } = useUser();
@@ -73,6 +74,9 @@ function App() {
           {/* Admin routes */}
           <Route path="/dashboard/admin">
             {() => <ProtectedRoute component={AdminDashboard} roles={['admin']} />}
+          </Route>
+          <Route path="/admin/customers">
+            {() => <ProtectedRoute component={CustomersPage} roles={['admin']} />}
           </Route>
           <Route path="/admin/airlines">
             {() => <ProtectedRoute component={AirlinesPage} roles={['admin']} />}

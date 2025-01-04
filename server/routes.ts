@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { db } from "@db";
-import { airlines, airports, oceanCarriers, documents, shipments, ports, countries } from "@db/schema";
+import { airlines, airports, oceanCarriers, documents, shipments, ports, countries, customers } from "@db/schema";
 import { eq } from "drizzle-orm";
 
 export function registerRoutes(app: Express): Server {
@@ -332,6 +332,56 @@ export function registerRoutes(app: Express): Server {
     } catch (error) {
       console.error("Error deleting country:", error);
       res.status(500).json({ error: "Failed to delete country" });
+    }
+  });
+
+  // Customers CRUD endpoints
+  app.get("/api/admin/customers", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const allCustomers = await db.select().from(customers);
+      res.json(allCustomers);
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+      res.status(500).json({ error: "Failed to fetch customers" });
+    }
+  });
+
+  app.post("/api/admin/customers", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      console.log("Creating customer with data:", req.body);
+      const [customer] = await db.insert(customers).values(req.body).returning();
+      console.log("Created customer:", customer);
+      res.json(customer);
+    } catch (error) {
+      console.error("Error creating customer:", error);
+      res.status(500).json({ error: "Failed to create customer", details: error.message });
+    }
+  });
+
+  app.put("/api/admin/customers/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [customer] = await db
+        .update(customers)
+        .set(req.body)
+        .where(eq(customers.id, parseInt(req.params.id)))
+        .returning();
+      res.json(customer);
+    } catch (error) {
+      console.error("Error updating customer:", error);
+      res.status(500).json({ error: "Failed to update customer" });
+    }
+  });
+
+  app.delete("/api/admin/customers/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [customer] = await db
+        .delete(customers)
+        .where(eq(customers.id, parseInt(req.params.id)))
+        .returning();
+      res.json(customer);
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+      res.status(500).json({ error: "Failed to delete customer" });
     }
   });
 

@@ -43,11 +43,22 @@ export const employees = pgTable("employees", {
 export const customers = pgTable("customers", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id).notNull(),
-  companyName: text("company_name"),
+  companyName: text("company_name").notNull(),
+  commercialName: text("commercial_name").notNull(),
   contactPerson: text("contact_person").notNull(),
   phone: text("phone").notNull(),
   address: text("address").notNull(),
+  city: text("city").notNull(),
+  state: text("state").notNull(),
+  country: text("country").notNull(),
+  postalCode: text("postal_code").notNull(),
   taxId: text("tax_id"),
+  eori: text("eori"),
+  website: text("website"),
+  notes: text("notes"),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 // Customs Brokers
