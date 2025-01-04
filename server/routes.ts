@@ -638,17 +638,22 @@ export function registerRoutes(app: Express): Server {
   // Inbound Airfreight Shipments routes
   app.get("/api/admin/airfreight/inbound", isAuthenticated, hasRole(["admin"]), async (req, res) => {
     try {
+      const shipper = customers.as('shipper');
+      const consignee = customers.as('consignee');
+      const originAirport = airports.as('originAirport');
+      const destinationAirport = airports.as('destinationAirport');
+
       const allShipments = await db
         .select({
           id: inboundAirfreightShipments.id,
           brlReference: inboundAirfreightShipments.brlReference,
           shipper: {
-            id: customers.id,
-            companyName: customers.companyName,
+            id: shipper.id,
+            companyName: shipper.companyName,
           },
           consignee: {
-            id: customers.id,
-            companyName: customers.companyName,
+            id: consignee.id,
+            companyName: consignee.companyName,
           },
           internationalAgent: {
             id: internationalAgents.id,
@@ -660,18 +665,18 @@ export function registerRoutes(app: Express): Server {
             iataCode: airlines.iataCode,
           },
           originAirport: {
-            id: airports.id,
-            name: airports.name,
-            iataCode: airports.iataCode,
-            city: airports.city,
-            country: airports.country,
+            id: originAirport.id,
+            name: originAirport.name,
+            iataCode: originAirport.iataCode,
+            city: originAirport.city,
+            country: originAirport.country,
           },
           destinationAirport: {
-            id: airports.id,
-            name: airports.name,
-            iataCode: airports.iataCode,
-            city: airports.city,
-            country: airports.country,
+            id: destinationAirport.id,
+            name: destinationAirport.name,
+            iataCode: destinationAirport.iataCode,
+            city: destinationAirport.city,
+            country: destinationAirport.country,
           },
           customsBroker: {
             id: customsBrokers.id,
@@ -700,12 +705,12 @@ export function registerRoutes(app: Express): Server {
         })
         .from(inboundAirfreightShipments)
         .leftJoin(
-          customers.as('shipper'),
-          eq(inboundAirfreightShipments.shipperId, customers.id)
+          shipper,
+          eq(inboundAirfreightShipments.shipperId, shipper.id)
         )
         .leftJoin(
-          customers.as('consignee'),
-          eq(inboundAirfreightShipments.consigneeId, customers.id)
+          consignee,
+          eq(inboundAirfreightShipments.consigneeId, consignee.id)
         )
         .leftJoin(
           internationalAgents,
@@ -716,12 +721,12 @@ export function registerRoutes(app: Express): Server {
           eq(inboundAirfreightShipments.airlineId, airlines.id)
         )
         .leftJoin(
-          airports.as('originAirport'),
-          eq(inboundAirfreightShipments.originAirportId, airports.id)
+          originAirport,
+          eq(inboundAirfreightShipments.originAirportId, originAirport.id)
         )
         .leftJoin(
-          airports.as('destinationAirport'),
-          eq(inboundAirfreightShipments.destinationAirportId, airports.id)
+          destinationAirport,
+          eq(inboundAirfreightShipments.destinationAirportId, destinationAirport.id)
         )
         .leftJoin(
           customsBrokers,
@@ -732,10 +737,12 @@ export function registerRoutes(app: Express): Server {
           eq(inboundAirfreightShipments.truckerId, truckers.id)
         )
         .orderBy(inboundAirfreightShipments.createdAt);
+
+      console.log("Successfully fetched shipments:", allShipments);
       res.json(allShipments);
     } catch (error: any) {
       console.error("Error fetching inbound airfreight shipments:", error);
-      res.status(500).json({ error: "Failed to fetch inbound airfreight shipments" });
+      res.status(500).json({ error: "Failed to fetch inbound airfreight shipments", details: error.message });
     }
   });
 
