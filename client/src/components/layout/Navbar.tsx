@@ -59,7 +59,7 @@ export function Navbar() {
         <div className="flex items-center">
           <Link href="/" className="flex items-center">
             <img
-              src="/BRL_vector.png"
+              src="attached_assets/BRL_vector_white.png"
               alt="BRL Global"
               className="h-8 w-auto object-contain"
               loading="eager"
