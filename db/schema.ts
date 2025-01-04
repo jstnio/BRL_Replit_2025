@@ -414,3 +414,60 @@ export type Customer = typeof customers.$inferSelect;
 export type InsertCustomer = typeof customers.$inferInsert;
 export type InternationalAgent = typeof internationalAgents.$inferSelect;
 export type InsertInternationalAgent = typeof internationalAgents.$inferInsert;
+
+// Inbound Airfreight Shipments
+export const inboundAirfreightShipments = pgTable("inbound_airfreight_shipments", {
+  id: serial("id").primaryKey(),
+  customerId: integer("customer_id").references(() => customers.id).notNull(),
+  airlineId: integer("airline_id").references(() => airlines.id).notNull(),
+  originAirportId: integer("origin_airport_id").references(() => airports.id).notNull(),
+  destinationAirportId: integer("destination_airport_id").references(() => airports.id).notNull(),
+  hawb: text("hawb").notNull(),
+  mawb: text("mawb").notNull(),
+  flightNumber: text("flight_number").notNull(),
+  departureDate: timestamp("departure_date").notNull(),
+  arrivalDate: timestamp("arrival_date").notNull(),
+  pieces: integer("pieces").notNull(),
+  weight: text("weight").notNull(),
+  volume: text("volume"),
+  goodsDescription: text("goods_description").notNull(),
+  status: text("status").notNull().default("pending"),
+  shipperName: text("shipper_name").notNull(),
+  shipperAddress: text("shipper_address").notNull(),
+  shipperCity: text("shipper_city").notNull(),
+  shipperCountry: text("shipper_country").notNull(),
+  consigneeName: text("consignee_name").notNull(),
+  consigneeAddress: text("consignee_address").notNull(),
+  consigneeCity: text("consignee_city").notNull(),
+  consigneeCountry: text("consignee_country").notNull(),
+  notes: text("notes"),
+  customsClearanceStatus: text("customs_clearance_status").default("pending"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Add relations for inbound airfreight shipments
+export const inboundAirfreightShipmentRelations = relations(inboundAirfreightShipments, ({ one }) => ({
+  customer: one(customers, {
+    fields: [inboundAirfreightShipments.customerId],
+    references: [customers.id],
+  }),
+  airline: one(airlines, {
+    fields: [inboundAirfreightShipments.airlineId],
+    references: [airlines.id],
+  }),
+  originAirport: one(airports, {
+    fields: [inboundAirfreightShipments.originAirportId],
+    references: [airports.id],
+  }),
+  destinationAirport: one(airports, {
+    fields: [inboundAirfreightShipments.destinationAirportId],
+    references: [airports.id],
+  }),
+}));
+
+// Add schema validation
+export const insertInboundAirfreightShipmentSchema = createInsertSchema(inboundAirfreightShipments);
+export const selectInboundAirfreightShipmentSchema = createSelectSchema(inboundAirfreightShipments);
+export type InboundAirfreightShipment = typeof inboundAirfreightShipments.$inferSelect;
+export type InsertInboundAirfreightShipment = typeof inboundAirfreightShipments.$inferInsert;

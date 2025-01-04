@@ -25,6 +25,7 @@ import { CustomsBrokersPage } from "./pages/admin/CustomsBrokersPage";
 import { PortTerminalsPage } from "./pages/admin/PortTerminalsPage";
 import { WarehousesPage } from "./pages/admin/WarehousesPage";
 import { AirfreightShipmentsPage } from "./pages/admin/AirfreightShipmentsPage";
+import { InboundAirfreightShipmentsPage } from "./pages/admin/InboundAirfreightShipmentsPage";
 
 function App() {
   const { user, isLoading } = useUser();
@@ -82,6 +83,9 @@ function App() {
           </Route>
           <Route path="/admin/airfreight">
             {() => <ProtectedRoute component={AirfreightShipmentsPage} roles={['admin']} />}
+          </Route>
+          <Route path="/admin/airfreight/inbound">
+            {() => <ProtectedRoute component={InboundAirfreightShipmentsPage} roles={['admin']} />}
           </Route>
           <Route path="/admin/customers">
             {() => <ProtectedRoute component={CustomersPage} roles={['admin']} />}
