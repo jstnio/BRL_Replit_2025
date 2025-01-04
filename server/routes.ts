@@ -642,7 +642,10 @@ export function registerRoutes(app: Express): Server {
         .select({
           id: inboundAirfreightShipments.id,
           brlReference: inboundAirfreightShipments.brlReference,
-          shipper: customers,
+          shipper: {
+            id: customers.id,
+            companyName: customers.companyName,
+          },
           consignee: {
             id: customers.id,
             companyName: customers.companyName,
@@ -696,14 +699,38 @@ export function registerRoutes(app: Express): Server {
           notes: inboundAirfreightShipments.notes,
         })
         .from(inboundAirfreightShipments)
-        .leftJoin(customers, eq(inboundAirfreightShipments.shipperId, customers.id))
-        .leftJoin(customers, eq(inboundAirfreightShipments.consigneeId, customers.id))
-        .leftJoin(internationalAgents, eq(inboundAirfreightShipments.internationalAgentId, internationalAgents.id))
-        .leftJoin(airlines, eq(inboundAirfreightShipments.airlineId, airlines.id))
-        .leftJoin(airports, eq(inboundAirfreightShipments.originAirportId, airports.id))
-        .leftJoin(airports, eq(inboundAirfreightShipments.destinationAirportId, airports.id))
-        .leftJoin(customsBrokers, eq(inboundAirfreightShipments.customsBrokerId, customsBrokers.id))
-        .leftJoin(truckers, eq(inboundAirfreightShipments.truckerId, truckers.id))
+        .leftJoin(
+          customers.as('shipper'),
+          eq(inboundAirfreightShipments.shipperId, customers.id)
+        )
+        .leftJoin(
+          customers.as('consignee'),
+          eq(inboundAirfreightShipments.consigneeId, customers.id)
+        )
+        .leftJoin(
+          internationalAgents,
+          eq(inboundAirfreightShipments.internationalAgentId, internationalAgents.id)
+        )
+        .leftJoin(
+          airlines,
+          eq(inboundAirfreightShipments.airlineId, airlines.id)
+        )
+        .leftJoin(
+          airports.as('originAirport'),
+          eq(inboundAirfreightShipments.originAirportId, airports.id)
+        )
+        .leftJoin(
+          airports.as('destinationAirport'),
+          eq(inboundAirfreightShipments.destinationAirportId, airports.id)
+        )
+        .leftJoin(
+          customsBrokers,
+          eq(inboundAirfreightShipments.customsBrokerId, customsBrokers.id)
+        )
+        .leftJoin(
+          truckers,
+          eq(inboundAirfreightShipments.truckerId, truckers.id)
+        )
         .orderBy(inboundAirfreightShipments.createdAt);
       res.json(allShipments);
     } catch (error: any) {
