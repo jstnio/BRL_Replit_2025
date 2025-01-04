@@ -43,16 +43,17 @@ import { useToast } from "@/hooks/use-toast";
 import { Pencil, Trash2, Plus } from "lucide-react";
 
 const formSchema = z.object({
+  brlReference: z.string().min(1, "BRL Reference is required"),
+  hawb: z.string().min(1, "HAWB is required"),
+  mawb: z.string().min(1, "MAWB is required"),
   shipperId: z.string().min(1, "Shipper is required"),
   consigneeId: z.string().min(1, "Consignee is required"),
   internationalAgentId: z.string().min(1, "International agent is required"),
   airlineId: z.string().min(1, "Airline is required"),
-  originAirportId: z.string().min(1, "Origin airport is required"),
-  destinationAirportId: z.string().min(1, "Destination airport is required"),
   customsBrokerId: z.string().min(1, "Customs broker is required"),
   truckerId: z.string().min(1, "Trucker is required"),
-  hawb: z.string().min(1, "HAWB is required"),
-  mawb: z.string().min(1, "MAWB is required"),
+  originAirportId: z.string().min(1, "Origin airport is required"),
+  destinationAirportId: z.string().min(1, "Destination airport is required"),
   flightNumber: z.string().min(1, "Flight number is required"),
   departureDate: z.string().min(1, "Departure date is required"),
   arrivalDate: z.string().min(1, "Arrival date is required"),
@@ -76,6 +77,7 @@ export function InboundAirfreightShipmentsPage() {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      brlReference: "",
       shipperId: "",
       consigneeId: "",
       hawb: "",
@@ -243,6 +245,7 @@ export function InboundAirfreightShipmentsPage() {
   function handleEdit(shipment: any) {
     setSelectedShipment(shipment);
     form.reset({
+      brlReference: shipment.brlReference,
       shipperId: shipment.shipperId.toString(),
       consigneeId: shipment.consigneeId.toString(),
       internationalAgentId: shipment.internationalAgentId.toString(),
@@ -273,6 +276,48 @@ export function InboundAirfreightShipmentsPage() {
   const renderForm = (onSubmit: (data: FormData) => void, submitLabel: string) => (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <FormField
+            control={form.control}
+            name="brlReference"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>BRL Reference</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="mawb"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>MAWB</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="hawb"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>HAWB</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -329,6 +374,7 @@ export function InboundAirfreightShipmentsPage() {
             )}
           />
         </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -385,7 +431,64 @@ export function InboundAirfreightShipmentsPage() {
             )}
           />
         </div>
-        {/*  Start of edited section */}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="customsBrokerId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Customs Broker</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select customs broker" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {customsBrokers?.map((broker: any) => (
+                      <SelectItem key={broker.id} value={broker.id.toString()}>
+                        {broker.commercialName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="truckerId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Trucker</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select trucker" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {truckers?.map((trucker: any) => (
+                      <SelectItem key={trucker.id} value={trucker.id.toString()}>
+                        {trucker.commercialName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -437,35 +540,6 @@ export function InboundAirfreightShipmentsPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="hawb"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>HAWB</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="mawb"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>MAWB</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -584,64 +658,6 @@ export function InboundAirfreightShipmentsPage() {
             )}
           />
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="customsBrokerId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Customs Broker</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select customs broker" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {customsBrokers?.map((broker: any) => (
-                      <SelectItem key={broker.id} value={broker.id.toString()}>
-                        {broker.commercialName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="truckerId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Trucker</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select trucker" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {truckers?.map((trucker: any) => (
-                      <SelectItem key={trucker.id} value={trucker.id.toString()}>
-                        {trucker.commercialName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        {/* End of edited section */}
         <DialogFooter>
           <Button type="submit">{submitLabel}</Button>
         </DialogFooter>
