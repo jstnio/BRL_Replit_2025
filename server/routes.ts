@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { db } from "@db";
-import { airlines, airports, oceanCarriers, documents, shipments, ports, countries, customers, internationalAgents, truckers, customsBrokers, portTerminals, warehouses } from "@db/schema";
+import { airlines, airports, oceanCarriers, documents, shipments, ports, countries, customers, internationalAgents, truckers, customsBrokers, portTerminals, warehouses, inboundAirfreightShipments } from "@db/schema";
 import { eq } from "drizzle-orm";
 
 export function registerRoutes(app: Express): Server {
@@ -632,6 +632,76 @@ export function registerRoutes(app: Express): Server {
     } catch (error) {
       console.error("Error deleting warehouse:", error);
       res.status(500).json({ error: "Failed to delete warehouse" });
+    }
+  });
+
+  // Inbound Airfreight Shipments routes
+  app.get("/api/admin/airfreight/inbound", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const allShipments = await db
+        .select()
+        .from(inboundAirfreightShipments)
+        .orderBy(inboundAirfreightShipments.createdAt);
+      res.json(allShipments);
+    } catch (error: any) {
+      console.error("Error fetching inbound airfreight shipments:", error);
+      res.status(500).json({ error: "Failed to fetch inbound airfreight shipments" });
+    }
+  });
+
+  app.post("/api/admin/airfreight/inbound", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      console.log("Creating inbound airfreight shipment with data:", req.body);
+
+      // Validate the brlReference is unique
+      if (req.body.brlReference) {
+        const existing = await db
+          .select()
+          .from(inboundAirfreightShipments)
+          .where(eq(inboundAirfreightShipments.brlReference, req.body.brlReference))
+          .limit(1);
+
+        if (existing.length > 0) {
+          return res.status(400).json({ error: "BRL Reference must be unique" });
+        }
+      }
+
+      // Create the shipment
+      const [shipment] = await db
+        .insert(inboundAirfreightShipments)
+        .values({
+          brlReference: req.body.brlReference,
+          shipperId: parseInt(req.body.shipperId),
+          consigneeId: parseInt(req.body.consigneeId),
+          internationalAgentId: parseInt(req.body.internationalAgentId),
+          airlineId: parseInt(req.body.airlineId),
+          originAirportId: parseInt(req.body.originAirportId),
+          destinationAirportId: parseInt(req.body.destinationAirportId),
+          customsBrokerId: parseInt(req.body.customsBrokerId),
+          truckerId: parseInt(req.body.truckerId),
+          hawb: req.body.hawb,
+          mawb: req.body.mawb,
+          flightNumber: req.body.flightNumber,
+          departureDate: new Date(req.body.departureDate),
+          arrivalDate: new Date(req.body.arrivalDate),
+          pieces: parseInt(req.body.pieces),
+          weight: req.body.weight,
+          volume: req.body.volume,
+          goodsDescription: req.body.goodsDescription,
+          perishableCargo: req.body.perishableCargo,
+          dangerousCargo: req.body.dangerousCargo,
+          notes: req.body.notes,
+        })
+        .returning();
+
+      console.log("Created inbound airfreight shipment:", shipment);
+      res.json(shipment);
+    } catch (error: any) {
+      console.error("Error creating inbound airfreight shipment:", error);
+      res.status(500).json({ 
+        error: "Failed to create inbound airfreight shipment", 
+        details: error.message 
+      });
     }
   });
 
