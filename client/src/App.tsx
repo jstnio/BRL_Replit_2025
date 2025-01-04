@@ -14,6 +14,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { CookieConsent } from "./components/CookieConsent";
 import { useUser } from "@/hooks/use-user";
 import { AirportsPage } from "./pages/admin/AirportsPage";
+import { OceanCarriersPage } from "./pages/admin/OceanCarriersPage";
 
 function App() {
   const { user, isLoading } = useUser();
@@ -75,6 +76,9 @@ function App() {
           </Route>
           <Route path="/admin/airports">
             {() => <ProtectedRoute component={AirportsPage} roles={['admin']} />}
+          </Route>
+          <Route path="/admin/ocean-carriers">
+            {() => <ProtectedRoute component={OceanCarriersPage} roles={['admin']} />}
           </Route>
 
           {/* Customer routes */}

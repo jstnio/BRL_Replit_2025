@@ -245,3 +245,20 @@ export const insertAirportSchema = createInsertSchema(airports);
 export const selectAirportSchema = createSelectSchema(airports);
 export type Airport = typeof airports.$inferSelect;
 export type InsertAirport = typeof airports.$inferInsert;
+
+// Ocean Carriers table
+export const oceanCarriers = pgTable("ocean_carriers", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  code: text("code").unique(),
+  country: text("country").notNull(),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Add to exports
+export const insertOceanCarrierSchema = createInsertSchema(oceanCarriers);
+export const selectOceanCarrierSchema = createSelectSchema(oceanCarriers);
+export type OceanCarrier = typeof oceanCarriers.$inferSelect;
+export type InsertOceanCarrier = typeof oceanCarriers.$inferInsert;

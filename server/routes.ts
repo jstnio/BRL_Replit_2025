@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { db } from "@db";
-import { airlines, airports } from "@db/schema";
+import { airlines, airports, oceanCarriers } from "@db/schema";
 import { eq } from "drizzle-orm";
 
 export function registerRoutes(app: Express): Server {
@@ -109,6 +109,56 @@ export function registerRoutes(app: Express): Server {
     } catch (error) {
       console.error("Error deleting airport:", error);
       res.status(500).json({ error: "Failed to delete airport" });
+    }
+  });
+
+  // Ocean Carriers CRUD endpoints
+  app.get("/api/admin/ocean-carriers", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const allCarriers = await db.select().from(oceanCarriers);
+      res.json(allCarriers);
+    } catch (error) {
+      console.error("Error fetching ocean carriers:", error);
+      res.status(500).json({ error: "Failed to fetch ocean carriers" });
+    }
+  });
+
+  app.post("/api/admin/ocean-carriers", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      console.log("Creating ocean carrier with data:", req.body);
+      const [carrier] = await db.insert(oceanCarriers).values(req.body).returning();
+      console.log("Created ocean carrier:", carrier);
+      res.json(carrier);
+    } catch (error) {
+      console.error("Error creating ocean carrier:", error);
+      res.status(500).json({ error: "Failed to create ocean carrier", details: error.message });
+    }
+  });
+
+  app.put("/api/admin/ocean-carriers/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [carrier] = await db
+        .update(oceanCarriers)
+        .set(req.body)
+        .where(eq(oceanCarriers.id, parseInt(req.params.id)))
+        .returning();
+      res.json(carrier);
+    } catch (error) {
+      console.error("Error updating ocean carrier:", error);
+      res.status(500).json({ error: "Failed to update ocean carrier" });
+    }
+  });
+
+  app.delete("/api/admin/ocean-carriers/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [carrier] = await db
+        .delete(oceanCarriers)
+        .where(eq(oceanCarriers.id, parseInt(req.params.id)))
+        .returning();
+      res.json(carrier);
+    } catch (error) {
+      console.error("Error deleting ocean carrier:", error);
+      res.status(500).json({ error: "Failed to delete ocean carrier" });
     }
   });
 
