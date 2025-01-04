@@ -638,54 +638,11 @@ export function registerRoutes(app: Express): Server {
   // Inbound Airfreight Shipments routes
   app.get("/api/admin/airfreight/inbound", isAuthenticated, hasRole(["admin"]), async (req, res) => {
     try {
-      const shipper = customers.as('shipper');
-      const consignee = customers.as('consignee');
-      const originAirport = airports.as('originAirport');
-      const destinationAirport = airports.as('destinationAirport');
-
+      // First get basic shipment data
       const allShipments = await db
         .select({
           id: inboundAirfreightShipments.id,
           brlReference: inboundAirfreightShipments.brlReference,
-          shipper: {
-            id: shipper.id,
-            companyName: shipper.companyName,
-          },
-          consignee: {
-            id: consignee.id,
-            companyName: consignee.companyName,
-          },
-          internationalAgent: {
-            id: internationalAgents.id,
-            companyName: internationalAgents.companyName,
-          },
-          airline: {
-            id: airlines.id,
-            name: airlines.name,
-            iataCode: airlines.iataCode,
-          },
-          originAirport: {
-            id: originAirport.id,
-            name: originAirport.name,
-            iataCode: originAirport.iataCode,
-            city: originAirport.city,
-            country: originAirport.country,
-          },
-          destinationAirport: {
-            id: destinationAirport.id,
-            name: destinationAirport.name,
-            iataCode: destinationAirport.iataCode,
-            city: destinationAirport.city,
-            country: destinationAirport.country,
-          },
-          customsBroker: {
-            id: customsBrokers.id,
-            companyName: customsBrokers.companyName,
-          },
-          trucker: {
-            id: truckers.id,
-            companyName: truckers.companyName,
-          },
           hawb: inboundAirfreightShipments.hawb,
           mawb: inboundAirfreightShipments.mawb,
           flightNumber: inboundAirfreightShipments.flightNumber,
@@ -698,51 +655,44 @@ export function registerRoutes(app: Express): Server {
           perishableCargo: inboundAirfreightShipments.perishableCargo,
           dangerousCargo: inboundAirfreightShipments.dangerousCargo,
           status: inboundAirfreightShipments.status,
-          customsClearanceStatus: inboundAirfreightShipments.customsClearanceStatus,
-          createdAt: inboundAirfreightShipments.createdAt,
-          updatedAt: inboundAirfreightShipments.updatedAt,
-          notes: inboundAirfreightShipments.notes,
+          shipperId: inboundAirfreightShipments.shipperId,
+          consigneeId: inboundAirfreightShipments.consigneeId,
+          originAirportId: inboundAirfreightShipments.originAirportId,
+          destinationAirportId: inboundAirfreightShipments.destinationAirportId,
         })
         .from(inboundAirfreightShipments)
-        .leftJoin(
-          shipper,
-          eq(inboundAirfreightShipments.shipperId, shipper.id)
-        )
-        .leftJoin(
-          consignee,
-          eq(inboundAirfreightShipments.consigneeId, consignee.id)
-        )
-        .leftJoin(
-          internationalAgents,
-          eq(inboundAirfreightShipments.internationalAgentId, internationalAgents.id)
-        )
-        .leftJoin(
-          airlines,
-          eq(inboundAirfreightShipments.airlineId, airlines.id)
-        )
-        .leftJoin(
-          originAirport,
-          eq(inboundAirfreightShipments.originAirportId, originAirport.id)
-        )
-        .leftJoin(
-          destinationAirport,
-          eq(inboundAirfreightShipments.destinationAirportId, destinationAirport.id)
-        )
-        .leftJoin(
-          customsBrokers,
-          eq(inboundAirfreightShipments.customsBrokerId, customsBrokers.id)
-        )
-        .leftJoin(
-          truckers,
-          eq(inboundAirfreightShipments.truckerId, truckers.id)
-        )
         .orderBy(inboundAirfreightShipments.createdAt);
 
-      console.log("Successfully fetched shipments:", allShipments);
-      res.json(allShipments);
+      // Then get the related data
+      const shipmentDetails = await Promise.all(
+        allShipments.map(async (shipment) => {
+          const [originAirport] = await db
+            .select()
+            .from(airports)
+            .where(eq(airports.id, shipment.originAirportId));
+
+          const [destinationAirport] = await db
+            .select()
+            .from(airports)
+            .where(eq(airports.id, shipment.destinationAirportId));
+
+          return {
+            ...shipment,
+            originAirport,
+            destinationAirport,
+          };
+        })
+      );
+
+      console.log("Successfully fetched shipments:", shipmentDetails);
+      res.json(shipmentDetails);
     } catch (error: any) {
       console.error("Error fetching inbound airfreight shipments:", error);
-      res.status(500).json({ error: "Failed to fetch inbound airfreight shipments", details: error.message });
+      res.status(500).json({ 
+        error: "Failed to fetch inbound airfreight shipments", 
+        details: error.message,
+        stack: error.stack 
+      });
     }
   });
 
