@@ -21,6 +21,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { CookieConsent } from "./components/CookieConsent";
 import { useUser } from "@/hooks/use-user";
 import { TruckersPage } from "./pages/admin/TruckersPage";
+import { CustomsBrokersPage } from "./pages/admin/CustomsBrokersPage";
 
 function App() {
   const { user, isLoading } = useUser();
@@ -102,6 +103,9 @@ function App() {
           </Route>
           <Route path="/admin/truckers">
             {() => <ProtectedRoute component={TruckersPage} roles={['admin']} />}
+          </Route>
+          <Route path="/admin/customs-brokers">
+            {() => <ProtectedRoute component={CustomsBrokersPage} roles={['admin']} />}
           </Route>
 
           {/* Customer routes */}

@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { db } from "@db";
-import { airlines, airports, oceanCarriers, documents, shipments, ports, countries, customers, internationalAgents, truckers } from "@db/schema";
+import { airlines, airports, oceanCarriers, documents, shipments, ports, countries, customers, internationalAgents, truckers, customsBrokers } from "@db/schema";
 import { eq } from "drizzle-orm";
 
 export function registerRoutes(app: Express): Server {
@@ -482,6 +482,56 @@ export function registerRoutes(app: Express): Server {
     } catch (error) {
       console.error("Error deleting trucker:", error);
       res.status(500).json({ error: "Failed to delete trucker" });
+    }
+  });
+
+  // Customs Brokers CRUD endpoints
+  app.get("/api/admin/customs-brokers", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const allBrokers = await db.select().from(customsBrokers);
+      res.json(allBrokers);
+    } catch (error) {
+      console.error("Error fetching customs brokers:", error);
+      res.status(500).json({ error: "Failed to fetch customs brokers" });
+    }
+  });
+
+  app.post("/api/admin/customs-brokers", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      console.log("Creating customs broker with data:", req.body);
+      const [broker] = await db.insert(customsBrokers).values(req.body).returning();
+      console.log("Created customs broker:", broker);
+      res.json(broker);
+    } catch (error) {
+      console.error("Error creating customs broker:", error);
+      res.status(500).json({ error: "Failed to create customs broker", details: error.message });
+    }
+  });
+
+  app.put("/api/admin/customs-brokers/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [broker] = await db
+        .update(customsBrokers)
+        .set(req.body)
+        .where(eq(customsBrokers.id, parseInt(req.params.id)))
+        .returning();
+      res.json(broker);
+    } catch (error) {
+      console.error("Error updating customs broker:", error);
+      res.status(500).json({ error: "Failed to update customs broker" });
+    }
+  });
+
+  app.delete("/api/admin/customs-brokers/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [broker] = await db
+        .delete(customsBrokers)
+        .where(eq(customsBrokers.id, parseInt(req.params.id)))
+        .returning();
+      res.json(broker);
+    } catch (error) {
+      console.error("Error deleting customs broker:", error);
+      res.status(500).json({ error: "Failed to delete customs broker" });
     }
   });
 

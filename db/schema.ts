@@ -63,11 +63,30 @@ export const customers = pgTable("customers", {
 // Customs Brokers
 export const customsBrokers = pgTable("customs_brokers", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id).notNull(),
+  companyName: text("company_name").notNull(),
+  commercialName: text("commercial_name").notNull(),
+  contactPerson: text("contact_person").notNull(),
+  phone: text("phone").notNull(),
+  address: text("address").notNull(),
+  city: text("city").notNull(),
+  state: text("state").notNull(),
+  country: text("country").notNull(),
+  postalCode: text("postal_code").notNull(),
+  taxId: text("tax_id"),
   licenseNumber: text("license_number").unique().notNull(),
   jurisdiction: text("jurisdiction").notNull(),
-  specializations: text("specializations").array().notNull(),
+  specializations: text("specializations").array(),
+  website: text("website"),
+  notes: text("notes"),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const insertCustomsBrokerSchema = createInsertSchema(customsBrokers);
+export const selectCustomsBrokerSchema = createSelectSchema(customsBrokers);
+export type CustomsBroker = typeof customsBrokers.$inferSelect;
+export type InsertCustomsBroker = typeof customsBrokers.$inferInsert;
 
 // International Agents table
 export const internationalAgents = pgTable("international_agents", {
@@ -159,8 +178,6 @@ export const insertEmployeeSchema = createInsertSchema(employees);
 export const selectEmployeeSchema = createSelectSchema(employees);
 export const insertCustomerSchema = createInsertSchema(customers);
 export const selectCustomerSchema = createSelectSchema(customers);
-export const insertCustomsBrokerSchema = createInsertSchema(customsBrokers);
-export const selectCustomsBrokerSchema = createSelectSchema(customsBrokers);
 export const insertInternationalAgentSchema = createInsertSchema(internationalAgents);
 export const selectInternationalAgentSchema = createSelectSchema(internationalAgents);
 
@@ -176,8 +193,6 @@ export type Employee = typeof employees.$inferSelect;
 export type InsertEmployee = typeof employees.$inferInsert;
 export type Customer = typeof customers.$inferSelect;
 export type InsertCustomer = typeof customers.$inferInsert;
-export type CustomsBroker = typeof customsBrokers.$inferSelect;
-export type InsertCustomsBroker = typeof customsBrokers.$inferInsert;
 export type InternationalAgent = typeof internationalAgents.$inferSelect;
 export type InsertInternationalAgent = typeof internationalAgents.$inferInsert;
 
