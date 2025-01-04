@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { db } from "@db";
-import { airlines, airports, oceanCarriers, documents, shipments } from "@db/schema";
+import { airlines, airports, oceanCarriers, documents, shipments, ports } from "@db/schema";
 import { eq } from "drizzle-orm";
 
 export function registerRoutes(app: Express): Server {
@@ -232,6 +232,56 @@ export function registerRoutes(app: Express): Server {
     } catch (error) {
       console.error("Error deleting document:", error);
       res.status(500).json({ error: "Failed to delete document" });
+    }
+  });
+
+  // Ports CRUD endpoints
+  app.get("/api/admin/ports", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const allPorts = await db.select().from(ports);
+      res.json(allPorts);
+    } catch (error) {
+      console.error("Error fetching ports:", error);
+      res.status(500).json({ error: "Failed to fetch ports" });
+    }
+  });
+
+  app.post("/api/admin/ports", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      console.log("Creating port with data:", req.body);
+      const [port] = await db.insert(ports).values(req.body).returning();
+      console.log("Created port:", port);
+      res.json(port);
+    } catch (error) {
+      console.error("Error creating port:", error);
+      res.status(500).json({ error: "Failed to create port", details: error.message });
+    }
+  });
+
+  app.put("/api/admin/ports/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [port] = await db
+        .update(ports)
+        .set(req.body)
+        .where(eq(ports.id, parseInt(req.params.id)))
+        .returning();
+      res.json(port);
+    } catch (error) {
+      console.error("Error updating port:", error);
+      res.status(500).json({ error: "Failed to update port" });
+    }
+  });
+
+  app.delete("/api/admin/ports/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [port] = await db
+        .delete(ports)
+        .where(eq(ports.id, parseInt(req.params.id)))
+        .returning();
+      res.json(port);
+    } catch (error) {
+      console.error("Error deleting port:", error);
+      res.status(500).json({ error: "Failed to delete port" });
     }
   });
 

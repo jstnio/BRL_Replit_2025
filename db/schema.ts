@@ -264,3 +264,22 @@ export const insertOceanCarrierSchema = createInsertSchema(oceanCarriers);
 export const selectOceanCarrierSchema = createSelectSchema(oceanCarriers);
 export type OceanCarrier = typeof oceanCarriers.$inferSelect;
 export type InsertOceanCarrier = typeof oceanCarriers.$inferInsert;
+
+// Ports table
+export const ports = pgTable("ports", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  code: text("code").unique(),
+  city: text("city").notNull(),
+  country: text("country").notNull(),
+  timezone: text("timezone").notNull(),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Add to exports
+export const insertPortSchema = createInsertSchema(ports);
+export const selectPortSchema = createSelectSchema(ports);
+export type Port = typeof ports.$inferSelect;
+export type InsertPort = typeof ports.$inferInsert;

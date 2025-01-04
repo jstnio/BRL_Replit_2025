@@ -16,6 +16,7 @@ import { useUser } from "@/hooks/use-user";
 import { AirportsPage } from "./pages/admin/AirportsPage";
 import { OceanCarriersPage } from "./pages/admin/OceanCarriersPage";
 import { DocumentsPage } from "./pages/admin/DocumentsPage";
+import { PortsPage } from "./pages/admin/PortsPage";
 
 function App() {
   const { user, isLoading } = useUser();
@@ -83,6 +84,9 @@ function App() {
           </Route>
           <Route path="/admin/documents">
             {() => <ProtectedRoute component={DocumentsPage} roles={['admin']} />}
+          </Route>
+          <Route path="/admin/ports">
+            {() => <ProtectedRoute component={PortsPage} roles={['admin']} />}
           </Route>
 
           {/* Customer routes */}
