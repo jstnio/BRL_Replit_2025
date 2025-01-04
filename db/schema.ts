@@ -226,3 +226,22 @@ export const insertAirlineSchema = createInsertSchema(airlines);
 export const selectAirlineSchema = createSelectSchema(airlines);
 export type Airline = typeof airlines.$inferSelect;
 export type InsertAirline = typeof airlines.$inferInsert;
+
+// Airports table
+export const airports = pgTable("airports", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  iataCode: text("iata_code").unique(),
+  city: text("city").notNull(),
+  country: text("country").notNull(),
+  timezone: text("timezone").notNull(),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Add to exports
+export const insertAirportSchema = createInsertSchema(airports);
+export const selectAirportSchema = createSelectSchema(airports);
+export type Airport = typeof airports.$inferSelect;
+export type InsertAirport = typeof airports.$inferInsert;

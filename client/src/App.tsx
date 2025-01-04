@@ -13,6 +13,7 @@ import { Footer } from "./components/layout/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import { CookieConsent } from "./components/CookieConsent";
 import { useUser } from "@/hooks/use-user";
+import { AirportsPage } from "./pages/admin/AirportsPage";
 
 function App() {
   const { user, isLoading } = useUser();
@@ -71,6 +72,9 @@ function App() {
           </Route>
           <Route path="/admin/airlines">
             {() => <ProtectedRoute component={AirlinesPage} roles={['admin']} />}
+          </Route>
+          <Route path="/admin/airports">
+            {() => <ProtectedRoute component={AirportsPage} roles={['admin']} />}
           </Route>
 
           {/* Customer routes */}
