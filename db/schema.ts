@@ -168,7 +168,9 @@ export const documents = pgTable("documents", {
   shipmentId: integer("shipment_id").references(() => shipments.id).notNull(),
   type: text("type").notNull(), // invoice, bill_of_lading, customs, etc.
   filename: text("filename").notNull(),
-  fileUrl: text("file_url").notNull(),
+  fileContent: text("file_content").notNull(), // Base64 encoded file content
+  fileSize: integer("file_size").notNull(),
+  mimeType: text("mime_type").notNull(),
   uploadedAt: timestamp("uploaded_at").defaultNow().notNull(),
 });
 

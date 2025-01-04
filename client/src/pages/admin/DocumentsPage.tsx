@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -39,13 +39,17 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Trash2, Plus, File } from "lucide-react";
+import { Pencil, Trash2, Plus, File, Upload } from "lucide-react";
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 const formSchema = z.object({
   shipmentId: z.string().transform(Number),
   type: z.string().min(1, "Document type is required"),
   filename: z.string().min(1, "Filename is required"),
-  fileUrl: z.string().min(1, "File URL is required"),
+  file: z
+    .instanceof(File)
+    .refine((file) => file.size <= MAX_FILE_SIZE, "File size must be less than 5MB"),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -64,7 +68,6 @@ export function DocumentsPage() {
       shipmentId: "",
       type: "",
       filename: "",
-      fileUrl: "",
     },
   });
 
@@ -76,12 +79,31 @@ export function DocumentsPage() {
     queryKey: ["/api/admin/shipments"],
   });
 
+  const convertFileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
   const createMutation = useMutation({
     mutationFn: async (data: FormData) => {
+      const fileContent = await convertFileToBase64(data.file);
+      const documentData = {
+        shipmentId: data.shipmentId,
+        type: data.type,
+        filename: data.filename,
+        fileContent: fileContent,
+        fileSize: data.file.size,
+        mimeType: data.file.type,
+      };
+
       const response = await fetch("/api/admin/documents", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(documentData),
         credentials: "include",
       });
 
@@ -97,7 +119,7 @@ export function DocumentsPage() {
       form.reset();
       toast({
         title: "Document created",
-        description: "The document has been created successfully.",
+        description: "The document has been uploaded successfully.",
       });
     },
     onError: (error: Error) => {
@@ -111,10 +133,20 @@ export function DocumentsPage() {
 
   const updateMutation = useMutation({
     mutationFn: async (data: FormData & { id: number }) => {
+      const fileContent = await convertFileToBase64(data.file);
+      const documentData = {
+        shipmentId: data.shipmentId,
+        type: data.type,
+        filename: data.filename,
+        fileContent: fileContent,
+        fileSize: data.file.size,
+        mimeType: data.file.type,
+      };
+
       const response = await fetch(`/api/admin/documents/${data.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(documentData),
         credentials: "include",
       });
 
@@ -174,6 +206,14 @@ export function DocumentsPage() {
     },
   });
 
+  const onFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      form.setValue("filename", file.name);
+      form.setValue("file", file);
+    }
+  }, [form]);
+
   function onCreateSubmit(data: FormData) {
     createMutation.mutate(data);
   }
@@ -189,7 +229,6 @@ export function DocumentsPage() {
       shipmentId: document.shipmentId.toString(),
       type: document.type,
       filename: document.filename,
-      fileUrl: document.fileUrl,
     });
     setIsEditOpen(true);
   }
@@ -197,6 +236,15 @@ export function DocumentsPage() {
   function handleDelete(document: any) {
     setSelectedDocument(document);
     setIsDeleteOpen(true);
+  }
+
+  function downloadDocument(document: any) {
+    const link = document.createElement('a');
+    link.href = document.fileContent;
+    link.download = document.filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   const documentTypes = [
@@ -220,9 +268,9 @@ export function DocumentsPage() {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create New Document</DialogTitle>
+              <DialogTitle>Upload New Document</DialogTitle>
               <DialogDescription>
-                Add a new shipping document to the system
+                Upload a new shipping document to the system
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
@@ -291,32 +339,27 @@ export function DocumentsPage() {
                 />
                 <FormField
                   control={form.control}
-                  name="filename"
-                  render={({ field }) => (
+                  name="file"
+                  render={({ field: { value, onChange, ...field } }) => (
                     <FormItem>
-                      <FormLabel>Filename</FormLabel>
+                      <FormLabel>Document File</FormLabel>
                       <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="fileUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>File URL</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
+                        <div className="flex items-center gap-4">
+                          <Input
+                            type="file"
+                            accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+                            onChange={onFileChange}
+                            {...field}
+                          />
+                          <Upload className="h-4 w-4 text-muted-foreground" />
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
                 <DialogFooter>
-                  <Button type="submit">Create Document</Button>
+                  <Button type="submit">Upload Document</Button>
                 </DialogFooter>
               </form>
             </Form>
@@ -358,15 +401,13 @@ export function DocumentsPage() {
                     ).join(" ")}
                   </TableCell>
                   <TableCell>
-                    <a 
-                      href={document.fileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      onClick={() => downloadDocument(document)}
                       className="flex items-center gap-2 text-blue-600 hover:text-blue-800"
                     >
                       <File className="h-4 w-4" />
                       {document.filename}
-                    </a>
+                    </button>
                   </TableCell>
                   <TableCell>
                     {new Date(document.uploadedAt).toLocaleDateString()}
@@ -470,25 +511,20 @@ export function DocumentsPage() {
               />
               <FormField
                 control={form.control}
-                name="filename"
-                render={({ field }) => (
+                name="file"
+                render={({ field: { value, onChange, ...field } }) => (
                   <FormItem>
-                    <FormLabel>Filename</FormLabel>
+                    <FormLabel>Document File</FormLabel>
                     <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="fileUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>File URL</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
+                      <div className="flex items-center gap-4">
+                        <Input
+                          type="file"
+                          accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+                          onChange={onFileChange}
+                          {...field}
+                        />
+                        <Upload className="h-4 w-4 text-muted-foreground" />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
