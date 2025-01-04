@@ -43,10 +43,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Pencil, Trash2, Plus } from "lucide-react";
 
 const formSchema = z.object({
-  customerId: z.string().min(1, "Customer is required"),
+  internationalAgentId: z.string().min(1, "International agent is required"),
   airlineId: z.string().min(1, "Airline is required"),
   originAirportId: z.string().min(1, "Origin airport is required"),
   destinationAirportId: z.string().min(1, "Destination airport is required"),
+  customsBrokerId: z.string().min(1, "Customs broker is required"),
+  truckerId: z.string().min(1, "Trucker is required"),
   hawb: z.string().min(1, "HAWB is required"),
   mawb: z.string().min(1, "MAWB is required"),
   flightNumber: z.string().min(1, "Flight number is required"),
@@ -56,14 +58,6 @@ const formSchema = z.object({
   weight: z.string().min(1, "Weight is required"),
   volume: z.string().optional(),
   goodsDescription: z.string().min(1, "Goods description is required"),
-  shipperName: z.string().min(1, "Shipper name is required"),
-  shipperAddress: z.string().min(1, "Shipper address is required"),
-  shipperCity: z.string().min(1, "Shipper city is required"),
-  shipperCountry: z.string().min(1, "Shipper country is required"),
-  consigneeName: z.string().min(1, "Consignee name is required"),
-  consigneeAddress: z.string().min(1, "Consignee address is required"),
-  consigneeCity: z.string().min(1, "Consignee city is required"),
-  consigneeCountry: z.string().min(1, "Consignee country is required"),
   notes: z.string().optional(),
 });
 
@@ -89,21 +83,13 @@ export function InboundAirfreightShipmentsPage() {
       weight: "",
       volume: "",
       goodsDescription: "",
-      shipperName: "",
-      shipperAddress: "",
-      shipperCity: "",
-      shipperCountry: "",
-      consigneeName: "",
-      consigneeAddress: "",
-      consigneeCity: "",
-      consigneeCountry: "",
       notes: "",
     },
   });
 
   // Fetch related data
-  const { data: customers } = useQuery({
-    queryKey: ["/api/admin/customers"],
+  const { data: internationalAgents } = useQuery({
+    queryKey: ["/api/admin/international-agents"],
   });
 
   const { data: airlines } = useQuery({
@@ -112,6 +98,14 @@ export function InboundAirfreightShipmentsPage() {
 
   const { data: airports } = useQuery({
     queryKey: ["/api/admin/airports"],
+  });
+
+  const { data: customsBrokers } = useQuery({
+    queryKey: ["/api/admin/customs-brokers"],
+  });
+
+  const { data: truckers } = useQuery({
+    queryKey: ["/api/admin/truckers"],
   });
 
   const { data: shipments, isLoading } = useQuery({
@@ -228,10 +222,12 @@ export function InboundAirfreightShipmentsPage() {
   function handleEdit(shipment: any) {
     setSelectedShipment(shipment);
     form.reset({
-      customerId: shipment.customerId.toString(),
+      internationalAgentId: shipment.internationalAgentId.toString(),
       airlineId: shipment.airlineId.toString(),
       originAirportId: shipment.originAirportId.toString(),
       destinationAirportId: shipment.destinationAirportId.toString(),
+      customsBrokerId: shipment.customsBrokerId.toString(),
+      truckerId: shipment.truckerId.toString(),
       hawb: shipment.hawb,
       mawb: shipment.mawb,
       flightNumber: shipment.flightNumber,
@@ -241,14 +237,6 @@ export function InboundAirfreightShipmentsPage() {
       weight: shipment.weight,
       volume: shipment.volume || "",
       goodsDescription: shipment.goodsDescription,
-      shipperName: shipment.shipperName,
-      shipperAddress: shipment.shipperAddress,
-      shipperCity: shipment.shipperCity,
-      shipperCountry: shipment.shipperCountry,
-      consigneeName: shipment.consigneeName,
-      consigneeAddress: shipment.consigneeAddress,
-      consigneeCity: shipment.consigneeCity,
-      consigneeCountry: shipment.consigneeCountry,
       notes: shipment.notes || "",
     });
     setIsEditOpen(true);
@@ -265,23 +253,23 @@ export function InboundAirfreightShipmentsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="customerId"
+            name="internationalAgentId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Customer</FormLabel>
+                <FormLabel>International Agent</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select customer" />
+                      <SelectValue placeholder="Select international agent" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {customers?.map((customer: any) => (
-                      <SelectItem key={customer.id} value={customer.id.toString()}>
-                        {customer.commercialName}
+                    {internationalAgents?.map((agent: any) => (
+                      <SelectItem key={agent.id} value={agent.id.toString()}>
+                        {agent.commercialName}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -309,6 +297,60 @@ export function InboundAirfreightShipmentsPage() {
                     {airlines?.map((airline: any) => (
                       <SelectItem key={airline.id} value={airline.id.toString()}>
                         {airline.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="customsBrokerId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Customs Broker</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select customs broker" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {customsBrokers?.map((broker: any) => (
+                      <SelectItem key={broker.id} value={broker.id.toString()}>
+                        {broker.commercialName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="truckerId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Trucker</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select trucker" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {truckers?.map((trucker: any) => (
+                      <SelectItem key={trucker.id} value={trucker.id.toString()}>
+                        {trucker.commercialName}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -490,120 +532,6 @@ export function InboundAirfreightShipmentsPage() {
             </FormItem>
           )}
         />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-4">
-            <h3 className="font-semibold">Shipper Information</h3>
-            <FormField
-              control={form.control}
-              name="shipperName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="shipperAddress"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Address</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="shipperCity"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>City</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="shipperCountry"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Country</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="font-semibold">Consignee Information</h3>
-            <FormField
-              control={form.control}
-              name="consigneeName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="consigneeAddress"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Address</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="consigneeCity"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>City</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="consigneeCountry"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Country</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
 
         <FormField
           control={form.control}

@@ -418,10 +418,12 @@ export type InsertInternationalAgent = typeof internationalAgents.$inferInsert;
 // Inbound Airfreight Shipments
 export const inboundAirfreightShipments = pgTable("inbound_airfreight_shipments", {
   id: serial("id").primaryKey(),
-  customerId: integer("customer_id").references(() => customers.id).notNull(),
+  internationalAgentId: integer("international_agent_id").references(() => internationalAgents.id).notNull(),
   airlineId: integer("airline_id").references(() => airlines.id).notNull(),
   originAirportId: integer("origin_airport_id").references(() => airports.id).notNull(),
   destinationAirportId: integer("destination_airport_id").references(() => airports.id).notNull(),
+  customsBrokerId: integer("customs_broker_id").references(() => customsBrokers.id).notNull(),
+  truckerId: integer("trucker_id").references(() => truckers.id).notNull(),
   hawb: text("hawb").notNull(),
   mawb: text("mawb").notNull(),
   flightNumber: text("flight_number").notNull(),
@@ -432,14 +434,6 @@ export const inboundAirfreightShipments = pgTable("inbound_airfreight_shipments"
   volume: text("volume"),
   goodsDescription: text("goods_description").notNull(),
   status: text("status").notNull().default("pending"),
-  shipperName: text("shipper_name").notNull(),
-  shipperAddress: text("shipper_address").notNull(),
-  shipperCity: text("shipper_city").notNull(),
-  shipperCountry: text("shipper_country").notNull(),
-  consigneeName: text("consignee_name").notNull(),
-  consigneeAddress: text("consignee_address").notNull(),
-  consigneeCity: text("consignee_city").notNull(),
-  consigneeCountry: text("consignee_country").notNull(),
   notes: text("notes"),
   customsClearanceStatus: text("customs_clearance_status").default("pending"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -448,9 +442,9 @@ export const inboundAirfreightShipments = pgTable("inbound_airfreight_shipments"
 
 // Add relations for inbound airfreight shipments
 export const inboundAirfreightShipmentRelations = relations(inboundAirfreightShipments, ({ one }) => ({
-  customer: one(customers, {
-    fields: [inboundAirfreightShipments.customerId],
-    references: [customers.id],
+  internationalAgent: one(internationalAgents, {
+    fields: [inboundAirfreightShipments.internationalAgentId],
+    references: [internationalAgents.id],
   }),
   airline: one(airlines, {
     fields: [inboundAirfreightShipments.airlineId],
@@ -463,6 +457,14 @@ export const inboundAirfreightShipmentRelations = relations(inboundAirfreightShi
   destinationAirport: one(airports, {
     fields: [inboundAirfreightShipments.destinationAirportId],
     references: [airports.id],
+  }),
+  customsBroker: one(customsBrokers, {
+    fields: [inboundAirfreightShipments.customsBrokerId],
+    references: [customsBrokers.id],
+  }),
+  trucker: one(truckers, {
+    fields: [inboundAirfreightShipments.truckerId],
+    references: [truckers.id],
   }),
 }));
 
