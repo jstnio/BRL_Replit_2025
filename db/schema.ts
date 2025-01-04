@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, foreignKey, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, foreignKey } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
 
@@ -182,20 +182,6 @@ export const insertInternationalAgentSchema = createInsertSchema(internationalAg
 export const selectInternationalAgentSchema = createSelectSchema(internationalAgents);
 
 
-// TypeScript types
-export type Role = typeof roles.$inferSelect;
-export type InsertRole = typeof roles.$inferInsert;
-export type User = typeof users.$inferSelect;
-export type InsertUser = typeof users.$inferInsert;
-export type Admin = typeof admins.$inferSelect;
-export type InsertAdmin = typeof admins.$inferInsert;
-export type Employee = typeof employees.$inferSelect;
-export type InsertEmployee = typeof employees.$inferInsert;
-export type Customer = typeof customers.$inferSelect;
-export type InsertCustomer = typeof customers.$inferInsert;
-export type InternationalAgent = typeof internationalAgents.$inferSelect;
-export type InsertInternationalAgent = typeof internationalAgents.$inferInsert;
-
 // Shipments
 export const shipments = pgTable("shipments", {
   id: serial("id").primaryKey(),
@@ -207,7 +193,7 @@ export const shipments = pgTable("shipments", {
   serviceType: text("service_type").notNull(), // ocean, air, ground
   estimatedDelivery: timestamp("estimated_delivery"),
   actualDelivery: timestamp("actual_delivery"),
-  details: jsonb("details"), // Flexible field for additional shipment details
+  details: text("details"), // Flexible field for additional shipment details
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -350,3 +336,50 @@ export const insertCountrySchema = createInsertSchema(countries);
 export const selectCountrySchema = createSelectSchema(countries);
 export type Country = typeof countries.$inferSelect;
 export type InsertCountry = typeof countries.$inferInsert;
+
+// Port Terminals table
+export const portTerminals = pgTable("port_terminals", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  portId: integer("port_id").references(() => ports.id).notNull(),
+  terminalCode: text("terminal_code").unique().notNull(),
+  operatingHours: text("operating_hours").notNull(),
+  cargoTypes: text("cargo_types").array(),
+  maxVesselSize: text("max_vessel_size"),
+  berthLength: text("berth_length"),
+  maxDraft: text("max_draft"),
+  storageCapacity: text("storage_capacity"),
+  contactPerson: text("contact_person").notNull(),
+  phone: text("phone").notNull(),
+  email: text("email").notNull(),
+  address: text("address").notNull(),
+  notes: text("notes"),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const portTerminalRelations = relations(portTerminals, ({ one }) => ({
+  port: one(ports, {
+    fields: [portTerminals.portId],
+    references: [ports.id],
+  }),
+}));
+
+export const insertPortTerminalSchema = createInsertSchema(portTerminals);
+export const selectPortTerminalSchema = createSelectSchema(portTerminals);
+export type PortTerminal = typeof portTerminals.$inferSelect;
+export type InsertPortTerminal = typeof portTerminals.$inferInsert;
+
+export type Role = typeof roles.$inferSelect;
+export type InsertRole = typeof roles.$inferInsert;
+export type User = typeof users.$inferSelect;
+export type InsertUser = typeof users.$inferInsert;
+export type Admin = typeof admins.$inferSelect;
+export type InsertAdmin = typeof admins.$inferInsert;
+export type Employee = typeof employees.$inferSelect;
+export type InsertEmployee = typeof employees.$inferInsert;
+export type Customer = typeof customers.$inferSelect;
+export type InsertCustomer = typeof customers.$inferInsert;
+export type InternationalAgent = typeof internationalAgents.$inferSelect;
+export type InsertInternationalAgent = typeof internationalAgents.$inferInsert;

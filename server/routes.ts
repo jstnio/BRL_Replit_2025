@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { db } from "@db";
-import { airlines, airports, oceanCarriers, documents, shipments, ports, countries, customers, internationalAgents, truckers, customsBrokers } from "@db/schema";
+import { airlines, airports, oceanCarriers, documents, shipments, ports, countries, customers, internationalAgents, truckers, customsBrokers, portTerminals } from "@db/schema";
 import { eq } from "drizzle-orm";
 
 export function registerRoutes(app: Express): Server {
@@ -532,6 +532,56 @@ export function registerRoutes(app: Express): Server {
     } catch (error) {
       console.error("Error deleting customs broker:", error);
       res.status(500).json({ error: "Failed to delete customs broker" });
+    }
+  });
+
+  // Port Terminals CRUD endpoints
+  app.get("/api/admin/port-terminals", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const allTerminals = await db.select().from(portTerminals);
+      res.json(allTerminals);
+    } catch (error) {
+      console.error("Error fetching port terminals:", error);
+      res.status(500).json({ error: "Failed to fetch port terminals" });
+    }
+  });
+
+  app.post("/api/admin/port-terminals", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      console.log("Creating port terminal with data:", req.body);
+      const [terminal] = await db.insert(portTerminals).values(req.body).returning();
+      console.log("Created port terminal:", terminal);
+      res.json(terminal);
+    } catch (error) {
+      console.error("Error creating port terminal:", error);
+      res.status(500).json({ error: "Failed to create port terminal", details: error.message });
+    }
+  });
+
+  app.put("/api/admin/port-terminals/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [terminal] = await db
+        .update(portTerminals)
+        .set(req.body)
+        .where(eq(portTerminals.id, parseInt(req.params.id)))
+        .returning();
+      res.json(terminal);
+    } catch (error) {
+      console.error("Error updating port terminal:", error);
+      res.status(500).json({ error: "Failed to update port terminal" });
+    }
+  });
+
+  app.delete("/api/admin/port-terminals/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [terminal] = await db
+        .delete(portTerminals)
+        .where(eq(portTerminals.id, parseInt(req.params.id)))
+        .returning();
+      res.json(terminal);
+    } catch (error) {
+      console.error("Error deleting port terminal:", error);
+      res.status(500).json({ error: "Failed to delete port terminal" });
     }
   });
 

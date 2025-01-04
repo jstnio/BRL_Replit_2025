@@ -22,6 +22,7 @@ import { CookieConsent } from "./components/CookieConsent";
 import { useUser } from "@/hooks/use-user";
 import { TruckersPage } from "./pages/admin/TruckersPage";
 import { CustomsBrokersPage } from "./pages/admin/CustomsBrokersPage";
+import { PortTerminalsPage } from "./pages/admin/PortTerminalsPage";
 
 function App() {
   const { user, isLoading } = useUser();
@@ -97,6 +98,9 @@ function App() {
           </Route>
           <Route path="/admin/ports">
             {() => <ProtectedRoute component={PortsPage} roles={['admin']} />}
+          </Route>
+          <Route path="/admin/port-terminals">
+            {() => <ProtectedRoute component={PortTerminalsPage} roles={['admin']} />}
           </Route>
           <Route path="/admin/countries">
             {() => <ProtectedRoute component={CountriesPage} roles={['admin']} />}
