@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { db } from "@db";
-import { airlines, airports, oceanCarriers, documents, shipments, ports, countries, customers, internationalAgents } from "@db/schema";
+import { airlines, airports, oceanCarriers, documents, shipments, ports, countries, customers, internationalAgents, truckers } from "@db/schema";
 import { eq } from "drizzle-orm";
 
 export function registerRoutes(app: Express): Server {
@@ -432,6 +432,56 @@ export function registerRoutes(app: Express): Server {
     } catch (error) {
       console.error("Error deleting international agent:", error);
       res.status(500).json({ error: "Failed to delete international agent" });
+    }
+  });
+
+  // Truckers CRUD endpoints
+  app.get("/api/admin/truckers", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const allTruckers = await db.select().from(truckers);
+      res.json(allTruckers);
+    } catch (error) {
+      console.error("Error fetching truckers:", error);
+      res.status(500).json({ error: "Failed to fetch truckers" });
+    }
+  });
+
+  app.post("/api/admin/truckers", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      console.log("Creating trucker with data:", req.body);
+      const [trucker] = await db.insert(truckers).values(req.body).returning();
+      console.log("Created trucker:", trucker);
+      res.json(trucker);
+    } catch (error) {
+      console.error("Error creating trucker:", error);
+      res.status(500).json({ error: "Failed to create trucker", details: error.message });
+    }
+  });
+
+  app.put("/api/admin/truckers/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [trucker] = await db
+        .update(truckers)
+        .set(req.body)
+        .where(eq(truckers.id, parseInt(req.params.id)))
+        .returning();
+      res.json(trucker);
+    } catch (error) {
+      console.error("Error updating trucker:", error);
+      res.status(500).json({ error: "Failed to update trucker" });
+    }
+  });
+
+  app.delete("/api/admin/truckers/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [trucker] = await db
+        .delete(truckers)
+        .where(eq(truckers.id, parseInt(req.params.id)))
+        .returning();
+      res.json(trucker);
+    } catch (error) {
+      console.error("Error deleting trucker:", error);
+      res.status(500).json({ error: "Failed to delete trucker" });
     }
   });
 

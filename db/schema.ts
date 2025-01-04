@@ -90,14 +90,34 @@ export const internationalAgents = pgTable("international_agents", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-// Truckers
+// Truckers table with enhanced fields
 export const truckers = pgTable("truckers", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id).notNull(),
+  companyName: text("company_name").notNull(),
+  commercialName: text("commercial_name").notNull(),
+  contactPerson: text("contact_person").notNull(),
+  phone: text("phone").notNull(),
   driverLicense: text("driver_license").unique().notNull(),
   vehicleType: text("vehicle_type").notNull(),
-  availabilityStatus: text("availability_status").notNull(),
+  vehiclePlate: text("vehicle_plate").unique().notNull(),
+  address: text("address").notNull(),
+  city: text("city").notNull(),
+  state: text("state").notNull(),
+  country: text("country").notNull(),
+  postalCode: text("postal_code").notNull(),
+  taxId: text("tax_id"),
+  website: text("website"),
+  notes: text("notes"),
+  availabilityStatus: text("availability_status").notNull().default('available'),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const insertTruckerSchema = createInsertSchema(truckers);
+export const selectTruckerSchema = createSelectSchema(truckers);
+export type Trucker = typeof truckers.$inferSelect;
+export type InsertTrucker = typeof truckers.$inferInsert;
 
 // Define relationships
 export const userRelations = relations(users, ({ one }) => ({
@@ -146,8 +166,7 @@ export const insertCustomsBrokerSchema = createInsertSchema(customsBrokers);
 export const selectCustomsBrokerSchema = createSelectSchema(customsBrokers);
 export const insertInternationalAgentSchema = createInsertSchema(internationalAgents);
 export const selectInternationalAgentSchema = createSelectSchema(internationalAgents);
-export const insertTruckerSchema = createInsertSchema(truckers);
-export const selectTruckerSchema = createSelectSchema(truckers);
+
 
 // TypeScript types
 export type Role = typeof roles.$inferSelect;
@@ -164,8 +183,6 @@ export type CustomsBroker = typeof customsBrokers.$inferSelect;
 export type InsertCustomsBroker = typeof customsBrokers.$inferInsert;
 export type InternationalAgent = typeof internationalAgents.$inferSelect;
 export type InsertInternationalAgent = typeof internationalAgents.$inferInsert;
-export type Trucker = typeof truckers.$inferSelect;
-export type InsertTrucker = typeof truckers.$inferInsert;
 
 // Shipments
 export const shipments = pgTable("shipments", {
