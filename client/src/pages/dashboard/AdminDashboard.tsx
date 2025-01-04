@@ -13,12 +13,14 @@ import {
   Truck,
   Warehouse,
   Container,
+  FileText,
 } from "lucide-react";
 
 const adminLinks = [
   { icon: Plane, label: "Airlines", href: "/admin/airlines" },
   { icon: Building2, label: "Airports", href: "/admin/airports" },
   { icon: Ship, label: "Ocean Carriers", href: "/admin/ocean-carriers" },
+  { icon: FileText, label: "Documents", href: "/admin/documents" },
   { icon: Container, label: "Ports", href: "/admin/ports" },
   { icon: Globe2, label: "Countries", href: "/admin/countries" },
   { icon: Users, label: "Customers", href: "/admin/customers" },
