@@ -18,16 +18,20 @@ export function registerRoutes(app: Express): Server {
       const allAirlines = await db.select().from(airlines);
       res.json(allAirlines);
     } catch (error) {
+      console.error("Error fetching airlines:", error);
       res.status(500).json({ error: "Failed to fetch airlines" });
     }
   });
 
   app.post("/api/admin/airlines", isAuthenticated, hasRole(["admin"]), async (req, res) => {
     try {
+      console.log("Creating airline with data:", req.body);
       const [airline] = await db.insert(airlines).values(req.body).returning();
+      console.log("Created airline:", airline);
       res.json(airline);
     } catch (error) {
-      res.status(500).json({ error: "Failed to create airline" });
+      console.error("Error creating airline:", error);
+      res.status(500).json({ error: "Failed to create airline", details: error.message });
     }
   });
 
@@ -40,6 +44,7 @@ export function registerRoutes(app: Express): Server {
         .returning();
       res.json(airline);
     } catch (error) {
+      console.error("Error updating airline:", error);
       res.status(500).json({ error: "Failed to update airline" });
     }
   });
@@ -52,6 +57,7 @@ export function registerRoutes(app: Express): Server {
         .returning();
       res.json(airline);
     } catch (error) {
+      console.error("Error deleting airline:", error);
       res.status(500).json({ error: "Failed to delete airline" });
     }
   });
