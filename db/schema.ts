@@ -42,7 +42,6 @@ export const employees = pgTable("employees", {
 // Customers - shipping clients
 export const customers = pgTable("customers", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id).notNull(),
   companyName: text("company_name").notNull(),
   commercialName: text("commercial_name").notNull(),
   contactPerson: text("contact_person").notNull(),
