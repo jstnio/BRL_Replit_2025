@@ -13,7 +13,10 @@ export function Home() {
           <div className="max-w-4xl mx-auto">
             <video 
               className="w-full rounded-lg shadow-xl" 
-              controls
+              autoPlay
+              muted
+              loop
+              playsInline
               poster="/attached_assets/BRL_vector.png"
             >
               <source src="/attached_assets/BRL_Container_Inpection.mp4" type="video/mp4" />
