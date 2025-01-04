@@ -209,3 +209,20 @@ export type InsertDocument = typeof documents.$inferInsert;
 export type SelectDocument = typeof documents.$inferSelect;
 export type InsertSession = typeof sessions.$inferInsert;
 export type SelectSession = typeof sessions.$inferSelect;
+
+// Airlines table
+export const airlines = pgTable("airlines", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  iataCode: text("iata_code").unique(),
+  country: text("country").notNull(),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Add to exports
+export const insertAirlineSchema = createInsertSchema(airlines);
+export const selectAirlineSchema = createSelectSchema(airlines);
+export type Airline = typeof airlines.$inferSelect;
+export type InsertAirline = typeof airlines.$inferInsert;

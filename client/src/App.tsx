@@ -7,6 +7,7 @@ import { Login } from "./pages/auth/Login";
 import { Register } from "./pages/auth/Register";
 import { CustomerDashboard } from "./pages/dashboard/CustomerDashboard";
 import { AdminDashboard } from "./pages/dashboard/AdminDashboard";
+import { AirlinesPage } from "./pages/admin/AirlinesPage";
 import { Navbar } from "./components/layout/Navbar";
 import { Footer } from "./components/layout/Footer";
 import { Toaster } from "@/components/ui/toaster";
@@ -67,6 +68,9 @@ function App() {
           {/* Admin routes */}
           <Route path="/dashboard/admin">
             {() => <ProtectedRoute component={AdminDashboard} roles={['admin']} />}
+          </Route>
+          <Route path="/admin/airlines">
+            {() => <ProtectedRoute component={AirlinesPage} roles={['admin']} />}
           </Route>
 
           {/* Customer routes */}
