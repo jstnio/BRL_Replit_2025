@@ -43,6 +43,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Pencil, Trash2, Plus } from "lucide-react";
 
 const formSchema = z.object({
+  shipperId: z.string().min(1, "Shipper is required"),
+  consigneeId: z.string().min(1, "Consignee is required"),
   internationalAgentId: z.string().min(1, "International agent is required"),
   airlineId: z.string().min(1, "Airline is required"),
   originAirportId: z.string().min(1, "Origin airport is required"),
@@ -74,6 +76,8 @@ export function InboundAirfreightShipmentsPage() {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      shipperId: "",
+      consigneeId: "",
       hawb: "",
       mawb: "",
       flightNumber: "",
@@ -84,6 +88,12 @@ export function InboundAirfreightShipmentsPage() {
       volume: "",
       goodsDescription: "",
       notes: "",
+      internationalAgentId: "",
+      airlineId: "",
+      originAirportId: "",
+      destinationAirportId: "",
+      customsBrokerId: "",
+      truckerId: "",
     },
   });
 
@@ -111,6 +121,14 @@ export function InboundAirfreightShipmentsPage() {
   const { data: shipments, isLoading } = useQuery({
     queryKey: ["/api/admin/airfreight/inbound"],
   });
+
+  const { data: customers } = useQuery({
+    queryKey: ["/api/admin/customers"],
+  });
+
+  const overseasCustomers = customers?.filter((customer: any) => customer.country !== "Brazil") || [];
+  const brazilianCustomers = customers?.filter((customer: any) => customer.country === "Brazil") || [];
+
 
   const createMutation = useMutation({
     mutationFn: async (data: FormData) => {
@@ -222,6 +240,8 @@ export function InboundAirfreightShipmentsPage() {
   function handleEdit(shipment: any) {
     setSelectedShipment(shipment);
     form.reset({
+      shipperId: shipment.shipperId.toString(),
+      consigneeId: shipment.consigneeId.toString(),
       internationalAgentId: shipment.internationalAgentId.toString(),
       airlineId: shipment.airlineId.toString(),
       originAirportId: shipment.originAirportId.toString(),
@@ -251,6 +271,61 @@ export function InboundAirfreightShipmentsPage() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="shipperId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Shipper (Overseas Customer)</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select shipper" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {overseasCustomers.map((customer: any) => (
+                      <SelectItem key={customer.id} value={customer.id.toString()}>
+                        {customer.commercialName} ({customer.country})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="consigneeId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Consignee (Brazilian Customer)</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select consignee" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {brazilianCustomers.map((customer: any) => (
+                      <SelectItem key={customer.id} value={customer.id.toString()}>
+                        {customer.commercialName} ({customer.city})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="internationalAgentId"
@@ -413,71 +488,75 @@ export function InboundAirfreightShipmentsPage() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="hawb"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>HAWB</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="mawb"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>MAWB</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="flightNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Flight Number</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="departureDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Departure Date</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="arrivalDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Arrival Date</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <FormField
+              control={form.control}
+              name="hawb"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>HAWB</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="mawb"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>MAWB</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="flightNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Flight Number</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="departureDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Departure Date</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="arrivalDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Arrival Date</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             control={form.control}
             name="pieces"

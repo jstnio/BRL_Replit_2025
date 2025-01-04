@@ -418,6 +418,8 @@ export type InsertInternationalAgent = typeof internationalAgents.$inferInsert;
 // Inbound Airfreight Shipments
 export const inboundAirfreightShipments = pgTable("inbound_airfreight_shipments", {
   id: serial("id").primaryKey(),
+  shipperId: integer("shipper_id").references(() => customers.id).notNull(),
+  consigneeId: integer("consignee_id").references(() => customers.id).notNull(),
   internationalAgentId: integer("international_agent_id").references(() => internationalAgents.id).notNull(),
   airlineId: integer("airline_id").references(() => airlines.id).notNull(),
   originAirportId: integer("origin_airport_id").references(() => airports.id).notNull(),
@@ -442,6 +444,14 @@ export const inboundAirfreightShipments = pgTable("inbound_airfreight_shipments"
 
 // Add relations for inbound airfreight shipments
 export const inboundAirfreightShipmentRelations = relations(inboundAirfreightShipments, ({ one }) => ({
+  shipper: one(customers, {
+    fields: [inboundAirfreightShipments.shipperId],
+    references: [customers.id],
+  }),
+  consignee: one(customers, {
+    fields: [inboundAirfreightShipments.consigneeId],
+    references: [customers.id],
+  }),
   internationalAgent: one(internationalAgents, {
     fields: [inboundAirfreightShipments.internationalAgentId],
     references: [internationalAgents.id],
