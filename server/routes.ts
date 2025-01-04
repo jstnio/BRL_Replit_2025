@@ -655,10 +655,15 @@ export function registerRoutes(app: Express): Server {
           perishableCargo: inboundAirfreightShipments.perishableCargo,
           dangerousCargo: inboundAirfreightShipments.dangerousCargo,
           status: inboundAirfreightShipments.status,
+          notes: inboundAirfreightShipments.notes,
           shipperId: inboundAirfreightShipments.shipperId,
           consigneeId: inboundAirfreightShipments.consigneeId,
+          internationalAgentId: inboundAirfreightShipments.internationalAgentId,
+          airlineId: inboundAirfreightShipments.airlineId,
           originAirportId: inboundAirfreightShipments.originAirportId,
           destinationAirportId: inboundAirfreightShipments.destinationAirportId,
+          customsBrokerId: inboundAirfreightShipments.customsBrokerId,
+          truckerId: inboundAirfreightShipments.truckerId,
         })
         .from(inboundAirfreightShipments)
         .orderBy(inboundAirfreightShipments.createdAt);
@@ -748,6 +753,39 @@ export function registerRoutes(app: Express): Server {
       res.status(500).json({ 
         error: "Failed to create inbound airfreight shipment", 
         details: error.message 
+      });
+    }
+  });
+
+  app.delete("/api/admin/airfreight/inbound/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      console.log("Deleting inbound airfreight shipment with ID:", req.params.id);
+
+      // Verify shipment exists
+      const [existingShipment] = await db
+        .select()
+        .from(inboundAirfreightShipments)
+        .where(eq(inboundAirfreightShipments.id, parseInt(req.params.id)))
+        .limit(1);
+
+      if (!existingShipment) {
+        return res.status(404).json({ error: "Shipment not found" });
+      }
+
+      // Delete the shipment
+      const [deletedShipment] = await db
+        .delete(inboundAirfreightShipments)
+        .where(eq(inboundAirfreightShipments.id, parseInt(req.params.id)))
+        .returning();
+
+      console.log("Successfully deleted shipment:", deletedShipment);
+      res.json(deletedShipment);
+    } catch (error: any) {
+      console.error("Error deleting inbound airfreight shipment:", error);
+      res.status(500).json({ 
+        error: "Failed to delete inbound airfreight shipment", 
+        details: error.message,
+        stack: error.stack 
       });
     }
   });
