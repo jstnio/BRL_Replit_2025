@@ -418,6 +418,7 @@ export type InsertInternationalAgent = typeof internationalAgents.$inferInsert;
 // Inbound Airfreight Shipments
 export const inboundAirfreightShipments = pgTable("inbound_airfreight_shipments", {
   id: serial("id").primaryKey(),
+  brlReference: text("brl_reference").notNull().unique(),
   shipperId: integer("shipper_id").references(() => customers.id).notNull(),
   consigneeId: integer("consignee_id").references(() => customers.id).notNull(),
   internationalAgentId: integer("international_agent_id").references(() => internationalAgents.id).notNull(),
@@ -435,6 +436,8 @@ export const inboundAirfreightShipments = pgTable("inbound_airfreight_shipments"
   weight: text("weight").notNull(),
   volume: text("volume"),
   goodsDescription: text("goods_description").notNull(),
+  perishableCargo: boolean("perishable_cargo").default(false).notNull(),
+  dangerousCargo: boolean("dangerous_cargo").default(false).notNull(),
   status: text("status").notNull().default("pending"),
   notes: text("notes"),
   customsClearanceStatus: text("customs_clearance_status").default("pending"),

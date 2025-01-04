@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { AdminPageLayout } from "@/components/admin/AdminPageLayout";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -43,7 +44,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Pencil, Trash2, Plus } from "lucide-react";
 
 const formSchema = z.object({
-  brlReference: z.string().min(1, "BRL Reference is required"),
+  brlReference: z.string().optional(), // Made optional as it will be auto-generated
   hawb: z.string().min(1, "HAWB is required"),
   mawb: z.string().min(1, "MAWB is required"),
   shipperId: z.string().min(1, "Shipper is required"),
@@ -61,10 +62,18 @@ const formSchema = z.object({
   weight: z.string().min(1, "Weight is required"),
   volume: z.string().optional(),
   goodsDescription: z.string().min(1, "Goods description is required"),
+  perishableCargo: z.boolean().default(false),
+  dangerousCargo: z.boolean().default(false),
   notes: z.string().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
+
+function generateBRLReference() {
+  const year = new Date().getFullYear().toString().slice(-2);
+  const randomNum = Math.floor(1000 + Math.random() * 9000); // 4-digit random number
+  return `${year}AI-BR${randomNum}`;
+}
 
 export function InboundAirfreightShipmentsPage() {
   const [selectedShipment, setSelectedShipment] = useState<any | null>(null);
@@ -89,6 +98,8 @@ export function InboundAirfreightShipmentsPage() {
       weight: "",
       volume: "",
       goodsDescription: "",
+      perishableCargo: false,
+      dangerousCargo: false,
       notes: "",
       internationalAgentId: "",
       airlineId: "",
@@ -134,13 +145,14 @@ export function InboundAirfreightShipmentsPage() {
   const overseasCustomers = customers?.filter((customer: any) => customer.country !== "Brazil") || [];
   const brazilianCustomers = customers?.filter((customer: any) => customer.country === "Brazil") || [];
 
-
   const createMutation = useMutation({
     mutationFn: async (data: FormData) => {
+      // Generate BRL Reference before sending
+      const brlReference = generateBRLReference();
       const response = await fetch("/api/admin/airfreight/inbound", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, brlReference }),
         credentials: "include",
       });
 
@@ -264,6 +276,8 @@ export function InboundAirfreightShipmentsPage() {
       volume: shipment.volume || "",
       goodsDescription: shipment.goodsDescription,
       notes: shipment.notes || "",
+      perishableCargo: shipment.perishableCargo,
+      dangerousCargo: shipment.dangerousCargo,
     });
     setIsEditOpen(true);
   }
@@ -284,7 +298,7 @@ export function InboundAirfreightShipmentsPage() {
               <FormItem>
                 <FormLabel>BRL Reference</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled placeholder="Auto-generated on save" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -644,6 +658,42 @@ export function InboundAirfreightShipmentsPage() {
               </FormItem>
             )}
           />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="perishableCargo"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Perishable Cargo</FormLabel>
+                  </div>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="dangerousCargo"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Dangerous Cargo</FormLabel>
+                  </div>
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             control={form.control}
             name="notes"
