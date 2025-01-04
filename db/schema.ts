@@ -69,13 +69,25 @@ export const customsBrokers = pgTable("customs_brokers", {
   specializations: text("specializations").array().notNull(),
 });
 
-// International Agents
+// International Agents table
 export const internationalAgents = pgTable("international_agents", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id).notNull(),
-  agencyName: text("agency_name").notNull(),
+  companyName: text("company_name").notNull(),
+  commercialName: text("commercial_name").notNull(),
+  contactPerson: text("contact_person").notNull(),
+  phone: text("phone").notNull(),
+  address: text("address").notNull(),
+  city: text("city").notNull(),
+  state: text("state").notNull(),
   country: text("country").notNull(),
-  servicesOffered: text("services_offered").array().notNull(),
+  postalCode: text("postal_code").notNull(),
+  taxId: text("tax_id"),
+  eori: text("eori"),
+  website: text("website"),
+  notes: text("notes"),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 // Truckers

@@ -8,17 +8,18 @@ import { Register } from "./pages/auth/Register";
 import { CustomerDashboard } from "./pages/dashboard/CustomerDashboard";
 import { AdminDashboard } from "./pages/dashboard/AdminDashboard";
 import { AirlinesPage } from "./pages/admin/AirlinesPage";
-import { Navbar } from "./components/layout/Navbar";
-import { Footer } from "./components/layout/Footer";
-import { Toaster } from "@/components/ui/toaster";
-import { CookieConsent } from "./components/CookieConsent";
-import { useUser } from "@/hooks/use-user";
 import { AirportsPage } from "./pages/admin/AirportsPage";
 import { OceanCarriersPage } from "./pages/admin/OceanCarriersPage";
 import { DocumentsPage } from "./pages/admin/DocumentsPage";
 import { PortsPage } from "./pages/admin/PortsPage";
 import { CountriesPage } from "./pages/admin/CountriesPage";
 import { CustomersPage } from "./pages/admin/CustomersPage";
+import { InternationalAgentsPage } from "./pages/admin/InternationalAgentsPage";
+import { Navbar } from "./components/layout/Navbar";
+import { Footer } from "./components/layout/Footer";
+import { Toaster } from "@/components/ui/toaster";
+import { CookieConsent } from "./components/CookieConsent";
+import { useUser } from "@/hooks/use-user";
 
 function App() {
   const { user, isLoading } = useUser();
@@ -64,7 +65,6 @@ function App() {
                   return <Redirect to="/dashboard/admin" />;
                 case 'customer':
                   return <Redirect to="/dashboard/customer" />;
-                // Add other role dashboards here as they're implemented
                 default:
                   return <Redirect to="/" />;
               }
@@ -77,6 +77,9 @@ function App() {
           </Route>
           <Route path="/admin/customers">
             {() => <ProtectedRoute component={CustomersPage} roles={['admin']} />}
+          </Route>
+          <Route path="/admin/international-agents">
+            {() => <ProtectedRoute component={InternationalAgentsPage} roles={['admin']} />}
           </Route>
           <Route path="/admin/airlines">
             {() => <ProtectedRoute component={AirlinesPage} roles={['admin']} />}

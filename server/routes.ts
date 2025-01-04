@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { db } from "@db";
-import { airlines, airports, oceanCarriers, documents, shipments, ports, countries, customers } from "@db/schema";
+import { airlines, airports, oceanCarriers, documents, shipments, ports, countries, customers, internationalAgents } from "@db/schema";
 import { eq } from "drizzle-orm";
 
 export function registerRoutes(app: Express): Server {
@@ -382,6 +382,56 @@ export function registerRoutes(app: Express): Server {
     } catch (error) {
       console.error("Error deleting customer:", error);
       res.status(500).json({ error: "Failed to delete customer" });
+    }
+  });
+
+  // International Agents CRUD endpoints
+  app.get("/api/admin/international-agents", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const allAgents = await db.select().from(internationalAgents);
+      res.json(allAgents);
+    } catch (error) {
+      console.error("Error fetching international agents:", error);
+      res.status(500).json({ error: "Failed to fetch international agents" });
+    }
+  });
+
+  app.post("/api/admin/international-agents", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      console.log("Creating international agent with data:", req.body);
+      const [agent] = await db.insert(internationalAgents).values(req.body).returning();
+      console.log("Created international agent:", agent);
+      res.json(agent);
+    } catch (error) {
+      console.error("Error creating international agent:", error);
+      res.status(500).json({ error: "Failed to create international agent", details: error.message });
+    }
+  });
+
+  app.put("/api/admin/international-agents/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [agent] = await db
+        .update(internationalAgents)
+        .set(req.body)
+        .where(eq(internationalAgents.id, parseInt(req.params.id)))
+        .returning();
+      res.json(agent);
+    } catch (error) {
+      console.error("Error updating international agent:", error);
+      res.status(500).json({ error: "Failed to update international agent" });
+    }
+  });
+
+  app.delete("/api/admin/international-agents/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [agent] = await db
+        .delete(internationalAgents)
+        .where(eq(internationalAgents.id, parseInt(req.params.id)))
+        .returning();
+      res.json(agent);
+    } catch (error) {
+      console.error("Error deleting international agent:", error);
+      res.status(500).json({ error: "Failed to delete international agent" });
     }
   });
 
