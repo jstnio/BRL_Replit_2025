@@ -48,9 +48,6 @@ const formSchema = z.object({
   commercialName: z.string().min(1, "Commercial name is required"),
   contactPerson: z.string().min(1, "Contact person is required"),
   phone: z.string().min(1, "Phone is required"),
-  driverLicense: z.string().min(1, "Driver license is required"),
-  vehicleType: z.string().min(1, "Vehicle type is required"),
-  vehiclePlate: z.string().min(1, "Vehicle plate is required"),
   address: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),
   state: z.string().min(1, "State is required"),
@@ -80,9 +77,6 @@ export function TruckersPage() {
       commercialName: "",
       contactPerson: "",
       phone: "",
-      driverLicense: "",
-      vehicleType: "",
-      vehiclePlate: "",
       address: "",
       city: "",
       state: "",
@@ -214,9 +208,6 @@ export function TruckersPage() {
       commercialName: trucker.commercialName,
       contactPerson: trucker.contactPerson,
       phone: trucker.phone,
-      driverLicense: trucker.driverLicense,
-      vehicleType: trucker.vehicleType,
-      vehiclePlate: trucker.vehiclePlate,
       address: trucker.address,
       city: trucker.city,
       state: trucker.state,
@@ -285,45 +276,6 @@ export function TruckersPage() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Phone</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="driverLicense"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Driver License</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="vehicleType"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Vehicle Type</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="vehiclePlate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Vehicle Plate</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -513,8 +465,8 @@ export function TruckersPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Commercial Name</TableHead>
-              <TableHead>Driver License</TableHead>
-              <TableHead>Vehicle Type</TableHead>
+              <TableHead>Contact Person</TableHead>
+              <TableHead>Phone</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Active</TableHead>
               <TableHead>Actions</TableHead>
@@ -537,8 +489,8 @@ export function TruckersPage() {
               truckers?.map((trucker: any) => (
                 <TableRow key={trucker.id}>
                   <TableCell>{trucker.commercialName}</TableCell>
-                  <TableCell>{trucker.driverLicense}</TableCell>
-                  <TableCell>{trucker.vehicleType}</TableCell>
+                  <TableCell>{trucker.contactPerson}</TableCell>
+                  <TableCell>{trucker.phone}</TableCell>
                   <TableCell>{trucker.availabilityStatus}</TableCell>
                   <TableCell>{trucker.active ? "Yes" : "No"}</TableCell>
                   <TableCell>
