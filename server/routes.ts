@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { db } from "@db";
-import { airlines, airports, oceanCarriers } from "@db/schema";
+import { airlines, airports, oceanCarriers, documents, shipments } from "@db/schema";
 import { eq } from "drizzle-orm";
 
 export function registerRoutes(app: Express): Server {
@@ -159,6 +159,79 @@ export function registerRoutes(app: Express): Server {
     } catch (error) {
       console.error("Error deleting ocean carrier:", error);
       res.status(500).json({ error: "Failed to delete ocean carrier" });
+    }
+  });
+
+  // Documents CRUD endpoints
+  app.get("/api/admin/documents", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const allDocuments = await db
+        .select({
+          ...documents,
+          shipment: {
+            id: shipments.id,
+            trackingNumber: shipments.trackingNumber,
+          },
+        })
+        .from(documents)
+        .leftJoin(shipments, eq(documents.shipmentId, shipments.id));
+      res.json(allDocuments);
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+      res.status(500).json({ error: "Failed to fetch documents" });
+    }
+  });
+
+  // Get all shipments for document form
+  app.get("/api/admin/shipments", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const allShipments = await db.select().from(shipments);
+      res.json(allShipments);
+    } catch (error) {
+      console.error("Error fetching shipments:", error);
+      res.status(500).json({ error: "Failed to fetch shipments" });
+    }
+  });
+
+  app.post("/api/admin/documents", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      console.log("Creating document with data:", req.body);
+      const [document] = await db.insert(documents).values({
+        ...req.body,
+        uploadedAt: new Date(),
+      }).returning();
+      console.log("Created document:", document);
+      res.json(document);
+    } catch (error) {
+      console.error("Error creating document:", error);
+      res.status(500).json({ error: "Failed to create document", details: error.message });
+    }
+  });
+
+  app.put("/api/admin/documents/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [document] = await db
+        .update(documents)
+        .set(req.body)
+        .where(eq(documents.id, parseInt(req.params.id)))
+        .returning();
+      res.json(document);
+    } catch (error) {
+      console.error("Error updating document:", error);
+      res.status(500).json({ error: "Failed to update document" });
+    }
+  });
+
+  app.delete("/api/admin/documents/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [document] = await db
+        .delete(documents)
+        .where(eq(documents.id, parseInt(req.params.id)))
+        .returning();
+      res.json(document);
+    } catch (error) {
+      console.error("Error deleting document:", error);
+      res.status(500).json({ error: "Failed to delete document" });
     }
   });
 
