@@ -110,6 +110,9 @@ export function InboundAirfreightShipmentsPage() {
     queryKey: ["/api/admin/airports"],
   });
 
+  const overseasAirports = airports?.filter((airport: any) => airport.country !== "Brazil") || [];
+  const brazilianAirports = airports?.filter((airport: any) => airport.country === "Brazil") || [];
+
   const { data: customsBrokers } = useQuery({
     queryKey: ["/api/admin/customs-brokers"],
   });
@@ -325,7 +328,8 @@ export function InboundAirfreightShipmentsPage() {
               </FormItem>
             )}
           />
-
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="internationalAgentId"
@@ -380,6 +384,8 @@ export function InboundAirfreightShipmentsPage() {
               </FormItem>
             )}
           />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="customsBrokerId"
@@ -434,129 +440,80 @@ export function InboundAirfreightShipmentsPage() {
               </FormItem>
             )}
           />
+        </div>
+
+        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="originAirportId"
+            name="hawb"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Origin Airport</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select origin airport" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {airports?.map((airport: any) => (
-                      <SelectItem key={airport.id} value={airport.id.toString()}>
-                        {airport.name} ({airport.iataCode})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FormLabel>HAWB</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
-            name="destinationAirportId"
+            name="mawb"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Destination Airport</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select destination airport" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {airports?.map((airport: any) => (
-                      <SelectItem key={airport.id} value={airport.id.toString()}>
-                        {airport.name} ({airport.iataCode})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FormLabel>MAWB</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <FormField
-              control={form.control}
-              name="hawb"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>HAWB</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="mawb"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>MAWB</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="flightNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Flight Number</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="departureDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Departure Date</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="arrivalDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Arrival Date</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+        </div>
+
+        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <FormField
+            control={form.control}
+            name="flightNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Flight Number</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="departureDate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Departure Date</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="arrivalDate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Arrival Date</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
           <FormField
             control={form.control}
             name="pieces"
@@ -575,7 +532,7 @@ export function InboundAirfreightShipmentsPage() {
             name="weight"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Weight</FormLabel>
+                <FormLabel>Weight (Gross)</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -597,34 +554,90 @@ export function InboundAirfreightShipmentsPage() {
             )}
           />
         </div>
-
-        <FormField
-          control={form.control}
-          name="goodsDescription"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Goods Description</FormLabel>
-              <FormControl>
-                <Textarea {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="notes"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Notes</FormLabel>
-              <FormControl>
-                <Textarea {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-1 gap-4">
+          <FormField
+            control={form.control}
+            name="goodsDescription"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Goods Description</FormLabel>
+                <FormControl>
+                  <Textarea {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="notes"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Notes</FormLabel>
+                <FormControl>
+                  <Textarea {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="grid grid-cols-1 gap-4">
+          <FormField
+            control={form.control}
+            name="originAirportId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Origin Airport (Overseas)</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select origin airport" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {overseasAirports?.map((airport: any) => (
+                      <SelectItem key={airport.id} value={airport.id.toString()}>
+                        {airport.name} ({airport.iataCode}) - {airport.country}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="destinationAirportId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Destination Airport (Brazil)</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select destination airport" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {brazilianAirports?.map((airport: any) => (
+                      <SelectItem key={airport.id} value={airport.id.toString()}>
+                        {airport.name} ({airport.iataCode}) - {airport.city}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <DialogFooter>
           <Button type="submit">{submitLabel}</Button>
