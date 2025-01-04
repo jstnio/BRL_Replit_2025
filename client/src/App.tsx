@@ -6,6 +6,7 @@ import { Contact } from "./pages/Contact";
 import { Login } from "./pages/auth/Login";
 import { Register } from "./pages/auth/Register";
 import { CustomerDashboard } from "./pages/dashboard/CustomerDashboard";
+import { AdminDashboard } from "./pages/dashboard/AdminDashboard";
 import { Navbar } from "./components/layout/Navbar";
 import { Footer } from "./components/layout/Footer";
 import { Toaster } from "@/components/ui/toaster";
@@ -52,14 +53,23 @@ function App() {
 
               // Redirect to role-specific dashboard
               switch (user.role?.name) {
+                case 'admin':
+                  return <Redirect to="/dashboard/admin" />;
                 case 'customer':
                   return <Redirect to="/dashboard/customer" />;
-                // Add other role dashboards here
+                // Add other role dashboards here as they're implemented
                 default:
                   return <Redirect to="/" />;
               }
             }}
           </Route>
+
+          {/* Admin routes */}
+          <Route path="/dashboard/admin">
+            {() => <ProtectedRoute component={AdminDashboard} roles={['admin']} />}
+          </Route>
+
+          {/* Customer routes */}
           <Route path="/dashboard/customer">
             {() => <ProtectedRoute component={CustomerDashboard} roles={['customer']} />}
           </Route>
