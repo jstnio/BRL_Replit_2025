@@ -23,6 +23,7 @@ import { useUser } from "@/hooks/use-user";
 import { TruckersPage } from "./pages/admin/TruckersPage";
 import { CustomsBrokersPage } from "./pages/admin/CustomsBrokersPage";
 import { PortTerminalsPage } from "./pages/admin/PortTerminalsPage";
+import { WarehousesPage } from "./pages/admin/WarehousesPage";
 
 function App() {
   const { user, isLoading } = useUser();
@@ -110,6 +111,9 @@ function App() {
           </Route>
           <Route path="/admin/customs-brokers">
             {() => <ProtectedRoute component={CustomsBrokersPage} roles={['admin']} />}
+          </Route>
+          <Route path="/admin/warehouses">
+            {() => <ProtectedRoute component={WarehousesPage} roles={['admin']} />}
           </Route>
 
           {/* Customer routes */}

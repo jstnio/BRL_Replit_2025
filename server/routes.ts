@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { db } from "@db";
-import { airlines, airports, oceanCarriers, documents, shipments, ports, countries, customers, internationalAgents, truckers, customsBrokers, portTerminals } from "@db/schema";
+import { airlines, airports, oceanCarriers, documents, shipments, ports, countries, customers, internationalAgents, truckers, customsBrokers, portTerminals, warehouses } from "@db/schema";
 import { eq } from "drizzle-orm";
 
 export function registerRoutes(app: Express): Server {
@@ -582,6 +582,56 @@ export function registerRoutes(app: Express): Server {
     } catch (error) {
       console.error("Error deleting port terminal:", error);
       res.status(500).json({ error: "Failed to delete port terminal" });
+    }
+  });
+
+  // Warehouses CRUD endpoints
+  app.get("/api/admin/warehouses", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const allWarehouses = await db.select().from(warehouses);
+      res.json(allWarehouses);
+    } catch (error) {
+      console.error("Error fetching warehouses:", error);
+      res.status(500).json({ error: "Failed to fetch warehouses" });
+    }
+  });
+
+  app.post("/api/admin/warehouses", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      console.log("Creating warehouse with data:", req.body);
+      const [warehouse] = await db.insert(warehouses).values(req.body).returning();
+      console.log("Created warehouse:", warehouse);
+      res.json(warehouse);
+    } catch (error) {
+      console.error("Error creating warehouse:", error);
+      res.status(500).json({ error: "Failed to create warehouse", details: error.message });
+    }
+  });
+
+  app.put("/api/admin/warehouses/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [warehouse] = await db
+        .update(warehouses)
+        .set(req.body)
+        .where(eq(warehouses.id, parseInt(req.params.id)))
+        .returning();
+      res.json(warehouse);
+    } catch (error) {
+      console.error("Error updating warehouse:", error);
+      res.status(500).json({ error: "Failed to update warehouse" });
+    }
+  });
+
+  app.delete("/api/admin/warehouses/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [warehouse] = await db
+        .delete(warehouses)
+        .where(eq(warehouses.id, parseInt(req.params.id)))
+        .returning();
+      res.json(warehouse);
+    } catch (error) {
+      console.error("Error deleting warehouse:", error);
+      res.status(500).json({ error: "Failed to delete warehouse" });
     }
   });
 

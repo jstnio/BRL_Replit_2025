@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, foreignKey } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
 
@@ -134,6 +134,37 @@ export const insertTruckerSchema = createInsertSchema(truckers);
 export const selectTruckerSchema = createSelectSchema(truckers);
 export type Trucker = typeof truckers.$inferSelect;
 export type InsertTrucker = typeof truckers.$inferInsert;
+
+// Warehouses table
+export const warehouses = pgTable("warehouses", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  code: text("code").unique().notNull(),
+  storageCapacity: text("storage_capacity").notNull(),
+  currentUtilization: text("current_utilization"),
+  address: text("address").notNull(),
+  city: text("city").notNull(),
+  state: text("state").notNull(),
+  country: text("country").notNull(),
+  postalCode: text("postal_code").notNull(),
+  contactPerson: text("contact_person").notNull(),
+  phone: text("phone").notNull(),
+  email: text("email").notNull(),
+  operatingHours: text("operating_hours").notNull(),
+  securityLevel: text("security_level"),
+  temperatureControl: boolean("temperature_control").default(false),
+  hazmatCertified: boolean("hazmat_certified").default(false),
+  notes: text("notes"),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Add to exports
+export const insertWarehouseSchema = createInsertSchema(warehouses);
+export const selectWarehouseSchema = createSelectSchema(warehouses);
+export type Warehouse = typeof warehouses.$inferSelect;
+export type InsertWarehouse = typeof warehouses.$inferInsert;
 
 // Define relationships
 export const userRelations = relations(users, ({ one }) => ({
