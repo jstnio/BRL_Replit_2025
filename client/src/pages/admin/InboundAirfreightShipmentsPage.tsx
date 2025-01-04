@@ -385,26 +385,26 @@ export function InboundAirfreightShipmentsPage() {
             )}
           />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           <FormField
             control={form.control}
-            name="customsBrokerId"
+            name="originAirportId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Customs Broker</FormLabel>
+                <FormLabel>Origin Airport (Overseas)</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select customs broker" />
+                      <SelectValue placeholder="Select origin airport" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {customsBrokers?.map((broker: any) => (
-                      <SelectItem key={broker.id} value={broker.id.toString()}>
-                        {broker.commercialName}
+                    {overseasAirports?.map((airport: any) => (
+                      <SelectItem key={airport.id} value={airport.id.toString()}>
+                        {airport.name} ({airport.iataCode}) - {airport.country}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -415,23 +415,23 @@ export function InboundAirfreightShipmentsPage() {
           />
           <FormField
             control={form.control}
-            name="truckerId"
+            name="destinationAirportId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Trucker</FormLabel>
+                <FormLabel>Destination Airport (Brazil)</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select trucker" />
+                      <SelectValue placeholder="Select destination airport" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {truckers?.map((trucker: any) => (
-                      <SelectItem key={trucker.id} value={trucker.id.toString()}>
-                        {trucker.commercialName}
+                    {brazilianAirports?.map((airport: any) => (
+                      <SelectItem key={airport.id} value={airport.id.toString()}>
+                        {airport.name} ({airport.iataCode}) - {airport.city}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -441,7 +441,6 @@ export function InboundAirfreightShipmentsPage() {
             )}
           />
         </div>
-
         <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -585,23 +584,23 @@ export function InboundAirfreightShipmentsPage() {
         <div className="grid grid-cols-1 gap-4">
           <FormField
             control={form.control}
-            name="originAirportId"
+            name="customsBrokerId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Origin Airport (Overseas)</FormLabel>
+                <FormLabel>Customs Broker</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select origin airport" />
+                      <SelectValue placeholder="Select customs broker" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {overseasAirports?.map((airport: any) => (
-                      <SelectItem key={airport.id} value={airport.id.toString()}>
-                        {airport.name} ({airport.iataCode}) - {airport.country}
+                    {customsBrokers?.map((broker: any) => (
+                      <SelectItem key={broker.id} value={broker.id.toString()}>
+                        {broker.commercialName}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -612,23 +611,23 @@ export function InboundAirfreightShipmentsPage() {
           />
           <FormField
             control={form.control}
-            name="destinationAirportId"
+            name="truckerId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Destination Airport (Brazil)</FormLabel>
+                <FormLabel>Trucker</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select destination airport" />
+                      <SelectValue placeholder="Select trucker" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {brazilianAirports?.map((airport: any) => (
-                      <SelectItem key={airport.id} value={airport.id.toString()}>
-                        {airport.name} ({airport.iataCode}) - {airport.city}
+                    {truckers?.map((trucker: any) => (
+                      <SelectItem key={trucker.id} value={trucker.id.toString()}>
+                        {trucker.commercialName}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -638,7 +637,6 @@ export function InboundAirfreightShipmentsPage() {
             )}
           />
         </div>
-
         <DialogFooter>
           <Button type="submit">{submitLabel}</Button>
         </DialogFooter>
