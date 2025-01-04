@@ -24,6 +24,7 @@ import { TruckersPage } from "./pages/admin/TruckersPage";
 import { CustomsBrokersPage } from "./pages/admin/CustomsBrokersPage";
 import { PortTerminalsPage } from "./pages/admin/PortTerminalsPage";
 import { WarehousesPage } from "./pages/admin/WarehousesPage";
+import { AirfreightShipmentsPage } from "./pages/admin/AirfreightShipmentsPage";
 
 function App() {
   const { user, isLoading } = useUser();
@@ -78,6 +79,9 @@ function App() {
           {/* Admin routes */}
           <Route path="/dashboard/admin">
             {() => <ProtectedRoute component={AdminDashboard} roles={['admin']} />}
+          </Route>
+          <Route path="/admin/airfreight">
+            {() => <ProtectedRoute component={AirfreightShipmentsPage} roles={['admin']} />}
           </Route>
           <Route path="/admin/customers">
             {() => <ProtectedRoute component={CustomersPage} roles={['admin']} />}
