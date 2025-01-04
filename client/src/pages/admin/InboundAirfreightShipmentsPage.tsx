@@ -385,7 +385,8 @@ export function InboundAirfreightShipmentsPage() {
             )}
           />
         </div>
-        <div className="grid grid-cols-1 gap-4">
+        {/*  Start of edited section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="originAirportId"
@@ -441,6 +442,7 @@ export function InboundAirfreightShipmentsPage() {
             )}
           />
         </div>
+
         <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -553,6 +555,7 @@ export function InboundAirfreightShipmentsPage() {
             )}
           />
         </div>
+
         <div className="grid grid-cols-1 gap-4">
           <FormField
             control={form.control}
@@ -581,7 +584,8 @@ export function InboundAirfreightShipmentsPage() {
             )}
           />
         </div>
-        <div className="grid grid-cols-1 gap-4">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="customsBrokerId"
@@ -637,6 +641,7 @@ export function InboundAirfreightShipmentsPage() {
             )}
           />
         </div>
+        {/* End of edited section */}
         <DialogFooter>
           <Button type="submit">{submitLabel}</Button>
         </DialogFooter>
