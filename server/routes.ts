@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { db } from "@db";
-import { airlines, airports, oceanCarriers, documents, shipments, ports } from "@db/schema";
+import { airlines, airports, oceanCarriers, documents, shipments, ports, countries } from "@db/schema";
 import { eq } from "drizzle-orm";
 
 export function registerRoutes(app: Express): Server {
@@ -282,6 +282,56 @@ export function registerRoutes(app: Express): Server {
     } catch (error) {
       console.error("Error deleting port:", error);
       res.status(500).json({ error: "Failed to delete port" });
+    }
+  });
+
+  // Countries CRUD endpoints
+  app.get("/api/admin/countries", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const allCountries = await db.select().from(countries);
+      res.json(allCountries);
+    } catch (error) {
+      console.error("Error fetching countries:", error);
+      res.status(500).json({ error: "Failed to fetch countries" });
+    }
+  });
+
+  app.post("/api/admin/countries", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      console.log("Creating country with data:", req.body);
+      const [country] = await db.insert(countries).values(req.body).returning();
+      console.log("Created country:", country);
+      res.json(country);
+    } catch (error) {
+      console.error("Error creating country:", error);
+      res.status(500).json({ error: "Failed to create country", details: error.message });
+    }
+  });
+
+  app.put("/api/admin/countries/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [country] = await db
+        .update(countries)
+        .set(req.body)
+        .where(eq(countries.id, parseInt(req.params.id)))
+        .returning();
+      res.json(country);
+    } catch (error) {
+      console.error("Error updating country:", error);
+      res.status(500).json({ error: "Failed to update country" });
+    }
+  });
+
+  app.delete("/api/admin/countries/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [country] = await db
+        .delete(countries)
+        .where(eq(countries.id, parseInt(req.params.id)))
+        .returning();
+      res.json(country);
+    } catch (error) {
+      console.error("Error deleting country:", error);
+      res.status(500).json({ error: "Failed to delete country" });
     }
   });
 

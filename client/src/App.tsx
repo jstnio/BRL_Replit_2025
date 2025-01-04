@@ -17,6 +17,7 @@ import { AirportsPage } from "./pages/admin/AirportsPage";
 import { OceanCarriersPage } from "./pages/admin/OceanCarriersPage";
 import { DocumentsPage } from "./pages/admin/DocumentsPage";
 import { PortsPage } from "./pages/admin/PortsPage";
+import { CountriesPage } from "./pages/admin/CountriesPage";
 
 function App() {
   const { user, isLoading } = useUser();
@@ -87,6 +88,9 @@ function App() {
           </Route>
           <Route path="/admin/ports">
             {() => <ProtectedRoute component={PortsPage} roles={['admin']} />}
+          </Route>
+          <Route path="/admin/countries">
+            {() => <ProtectedRoute component={CountriesPage} roles={['admin']} />}
           </Route>
 
           {/* Customer routes */}

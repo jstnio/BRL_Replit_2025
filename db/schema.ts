@@ -283,3 +283,19 @@ export const insertPortSchema = createInsertSchema(ports);
 export const selectPortSchema = createSelectSchema(ports);
 export type Port = typeof ports.$inferSelect;
 export type InsertPort = typeof ports.$inferInsert;
+
+// Countries table
+export const countries = pgTable("countries", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  code: text("code").unique().notNull(),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Add to exports
+export const insertCountrySchema = createInsertSchema(countries);
+export const selectCountrySchema = createSelectSchema(countries);
+export type Country = typeof countries.$inferSelect;
+export type InsertCountry = typeof countries.$inferInsert;
