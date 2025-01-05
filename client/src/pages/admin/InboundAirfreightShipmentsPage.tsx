@@ -41,7 +41,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { Pencil, Trash2, Plus, Download } from "lucide-react";
 
 const formSchema = z.object({
   brlReference: z.string().optional(),
@@ -149,6 +149,11 @@ export function InboundAirfreightShipmentsPage() {
 
   const overseasCustomers = customers?.filter((customer: any) => customer.country !== "Brazil") || [];
   const brazilianCustomers = customers?.filter((customer: any) => customer.country === "Brazil") || [];
+
+  const { data: documents } = useQuery({
+    queryKey: ['/api/admin/documents'],
+  });
+
 
   const createMutation = useMutation({
     mutationFn: async (data: FormData) => {
@@ -292,6 +297,14 @@ export function InboundAirfreightShipmentsPage() {
   function handleDelete(shipment: any) {
     setSelectedShipment(shipment);
     setIsDeleteOpen(true);
+  }
+
+  function formatFileSize(bytes: number) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
   const renderForm = (onSubmit: (data: FormData) => void, submitLabel: string) => (
@@ -776,6 +789,128 @@ export function InboundAirfreightShipmentsPage() {
             </FormItem>
           )}
         />
+
+        {/* Document Upload Section */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-medium">Shipping Documents</h3>
+            <input
+              type="file"
+              multiple
+              onChange={async (e) => {
+                if (!e.target.files?.length) return;
+
+                const formData = new FormData();
+                for (let i = 0; i < e.target.files.length; i++) {
+                  const file = e.target.files[i];
+                  formData.append('files', file);
+                }
+
+                try {
+                  const response = await fetch('/api/admin/documents/upload', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include',
+                  });
+
+                  if (!response.ok) {
+                    throw new Error(await response.text());
+                  }
+
+                  toast({
+                    title: "Files uploaded",
+                    description: "Documents have been uploaded successfully.",
+                  });
+
+                  // Refresh documents list
+                  queryClient.invalidateQueries({ queryKey: ['/api/admin/documents'] });
+                } catch (error: any) {
+                  toast({
+                    variant: "destructive",
+                    title: "Upload failed",
+                    description: error.message,
+                  });
+                }
+              }}
+              className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+            />
+          </div>
+
+          {/* Document List */}
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>File Name</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Size</TableHead>
+                  <TableHead>Uploaded</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {documents?.map((doc: any) => (
+                  <TableRow key={doc.id}>
+                    <TableCell>{doc.filename}</TableCell>
+                    <TableCell>{doc.type}</TableCell>
+                    <TableCell>{formatFileSize(doc.fileSize)}</TableCell>
+                    <TableCell>{new Date(doc.uploadedAt).toLocaleString()}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          // Convert base64 to blob and download
+                          const blob = new Blob([Buffer.from(doc.fileContent, 'base64')], { type: doc.mimeType });
+                          const url = window.URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = doc.filename;
+                          a.click();
+                          window.URL.revokeObjectURL(url);
+                        }}
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={async () => {
+                          try {
+                            const response = await fetch(`/api/admin/documents/${doc.id}`, {
+                              method: 'DELETE',
+                              credentials: 'include',
+                            });
+
+                            if (!response.ok) {
+                              throw new Error(await response.text());
+                            }
+
+                            toast({
+                              title: "Document deleted",
+                              description: "The document has been deleted successfully.",
+                            });
+
+                            queryClient.invalidateQueries({ queryKey: ['/api/admin/documents'] });
+                          } catch (error: any) {
+                            toast({
+                              variant: "destructive",
+                              title: "Delete failed",
+                              description: error.message,
+                            });
+                          }
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+
         <DialogFooter>
           <Button type="submit">{submitLabel}</Button>
         </DialogFooter>

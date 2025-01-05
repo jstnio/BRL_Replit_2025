@@ -2,8 +2,17 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { db } from "@db";
+import multer from 'multer';
 import { airlines, airports, oceanCarriers, documents, shipments, ports, countries, customers, internationalAgents, truckers, customsBrokers, portTerminals, warehouses, inboundAirfreightShipments } from "@db/schema";
 import { eq } from "drizzle-orm";
+
+// Configure multer for handling file uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+});
 
 export function registerRoutes(app: Express): Server {
   // Initialize authentication and get middleware helpers
@@ -11,6 +20,91 @@ export function registerRoutes(app: Express): Server {
 
   // Create HTTP server
   const httpServer = createServer(app);
+
+  // Document upload endpoint
+  app.post("/api/admin/documents/upload", isAuthenticated, hasRole(["admin"]), upload.array('files'), async (req, res) => {
+    try {
+      if (!req.files || !Array.isArray(req.files)) {
+        return res.status(400).json({ error: "No files uploaded" });
+      }
+
+      const uploadedFiles = req.files as Express.Multer.File[];
+      const uploadedDocs = await Promise.all(
+        uploadedFiles.map(async (file) => {
+          // Create document record
+          const [doc] = await db.insert(documents).values({
+            filename: file.originalname,
+            fileContent: file.buffer.toString('base64'),
+            fileSize: file.size,
+            mimeType: file.mimetype,
+            uploadedAt: new Date(),
+            type: determineDocumentType(file.originalname),
+          }).returning();
+
+          return doc;
+        })
+      );
+
+      res.json(uploadedDocs);
+    } catch (error: any) {
+      console.error("Error uploading documents:", error);
+      res.status(500).json({ 
+        error: "Failed to upload documents", 
+        details: error.message 
+      });
+    }
+  });
+
+  // Get documents for a shipment
+  app.get("/api/admin/documents/:shipmentId", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const shipmentDocs = await db
+        .select()
+        .from(documents)
+        .where(eq(documents.shipmentId, parseInt(req.params.shipmentId)));
+
+      res.json(shipmentDocs);
+    } catch (error: any) {
+      console.error("Error fetching documents:", error);
+      res.status(500).json({ 
+        error: "Failed to fetch documents", 
+        details: error.message 
+      });
+    }
+  });
+
+  // Delete document
+  app.delete("/api/admin/documents/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const [deletedDoc] = await db
+        .delete(documents)
+        .where(eq(documents.id, parseInt(req.params.id)))
+        .returning();
+
+      if (!deletedDoc) {
+        return res.status(404).json({ error: "Document not found" });
+      }
+
+      res.json(deletedDoc);
+    } catch (error: any) {
+      console.error("Error deleting document:", error);
+      res.status(500).json({ 
+        error: "Failed to delete document", 
+        details: error.message 
+      });
+    }
+  });
+
+  // Helper function to determine document type based on filename
+  function determineDocumentType(filename: string): string {
+    const lowerFilename = filename.toLowerCase();
+    if (lowerFilename.includes('mawb')) return 'MAWB';
+    if (lowerFilename.includes('hawb')) return 'HAWB';
+    if (lowerFilename.includes('invoice')) return 'Commercial Invoice';
+    if (lowerFilename.includes('packing')) return 'Packing List';
+    if (lowerFilename.includes('manifest')) return 'Cargo Manifest';
+    return 'Other';
+  }
 
   // Airlines CRUD endpoints
   app.get("/api/admin/airlines", isAuthenticated, hasRole(["admin"]), async (req, res) => {
@@ -222,18 +316,6 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
-  app.delete("/api/admin/documents/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
-    try {
-      const [document] = await db
-        .delete(documents)
-        .where(eq(documents.id, parseInt(req.params.id)))
-        .returning();
-      res.json(document);
-    } catch (error) {
-      console.error("Error deleting document:", error);
-      res.status(500).json({ error: "Failed to delete document" });
-    }
-  });
 
   // Ports CRUD endpoints
   app.get("/api/admin/ports", isAuthenticated, hasRole(["admin"]), async (req, res) => {
@@ -697,8 +779,7 @@ export function registerRoutes(app: Express): Server {
     } catch (error: any) {
       console.error("Error fetching inbound airfreight shipments:", error);
       res.status(500).json({ 
-        error: "Failed to fetch inbound airfreight shipments", 
-        details: error.message,
+        error: "Failed to fetch inbound airfreight shipments", details: error.message,
         stack: error.stack 
       });
     }
