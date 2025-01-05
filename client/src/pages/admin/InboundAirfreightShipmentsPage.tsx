@@ -453,26 +453,68 @@ export function InboundAirfreightShipmentsPage() {
           />
         </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <FormField
+            control={form.control}
+            name="flightNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Flight Number</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="departureDate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Departure Date</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="arrivalDate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Arrival Date</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="customsBrokerId"
+            name="originAirportId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Customs Broker</FormLabel>
+                <FormLabel>Origin Airport (Overseas)</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select customs broker" />
+                      <SelectValue placeholder="Select origin airport" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {customsBrokers?.map((broker: any) => (
-                      <SelectItem key={broker.id} value={broker.id.toString()}>
-                        {broker.commercialName}
+                    {overseasAirports?.map((airport: any) => (
+                      <SelectItem key={airport.id} value={airport.id.toString()}>
+                        {airport.name} ({airport.iataCode}) - {airport.country}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -483,23 +525,23 @@ export function InboundAirfreightShipmentsPage() {
           />
           <FormField
             control={form.control}
-            name="truckerId"
+            name="destinationAirportId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Trucker</FormLabel>
+                <FormLabel>Destination Airport (Brazil)</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select trucker" />
+                      <SelectValue placeholder="Select destination airport" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {truckers?.map((trucker: any) => (
-                      <SelectItem key={trucker.id} value={trucker.id.toString()}>
-                        {trucker.commercialName}
+                    {brazilianAirports?.map((airport: any) => (
+                      <SelectItem key={airport.id} value={airport.id.toString()}>
+                        {airport.name} ({airport.iataCode}) - {airport.city}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -510,13 +552,43 @@ export function InboundAirfreightShipmentsPage() {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Measurement fields */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="flightNumber"
+              name="pieces"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Flight Number</FormLabel>
+                  <FormLabel>Pieces</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="volume"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Volume</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="weight"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Weight (Gross)</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -526,148 +598,19 @@ export function InboundAirfreightShipmentsPage() {
             />
             <FormField
               control={form.control}
-              name="departureDate"
+              name="chargeableWeight"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Departure Date</FormLabel>
+                  <FormLabel>Chargeable Weight</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="arrivalDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Arrival Date</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="pieces"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Pieces</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="volume"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Volume</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="weight"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Weight (Gross)</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="chargeableWeight"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Chargeable Weight</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="originAirportId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Origin Airport (Overseas)</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select origin airport" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {overseasAirports?.map((airport: any) => (
-                        <SelectItem key={airport.id} value={airport.id.toString()}>
-                          {airport.name} ({airport.iataCode}) - {airport.country}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="destinationAirportId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Destination Airport (Brazil)</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select destination airport" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {brazilianAirports?.map((airport: any) => (
-                        <SelectItem key={airport.id} value={airport.id.toString()}>
-                          {airport.name} ({airport.iataCode}) - {airport.city}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
+        </div>
 
         <FormField
           control={form.control}
@@ -760,6 +703,7 @@ export function InboundAirfreightShipmentsPage() {
             )}
           />
         </div>
+
         <FormField
           control={form.control}
           name="notes"
