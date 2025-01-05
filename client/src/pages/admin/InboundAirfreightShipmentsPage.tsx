@@ -396,6 +396,7 @@ export function InboundAirfreightShipmentsPage() {
           />
         </div>
 
+        {/* International Agent and Customs Broker in same line */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -426,23 +427,23 @@ export function InboundAirfreightShipmentsPage() {
           />
           <FormField
             control={form.control}
-            name="airlineId"
+            name="customsBrokerId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Airline</FormLabel>
+                <FormLabel>Customs Broker</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select airline" />
+                      <SelectValue placeholder="Select customs broker" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {airlines?.map((airline: any) => (
-                      <SelectItem key={airline.id} value={airline.id.toString()}>
-                        {airline.name}
+                    {customsBrokers?.map((broker: any) => (
+                      <SelectItem key={broker.id} value={broker.id.toString()}>
+                        {broker.commercialName}
                       </SelectItem>
                     ))}
                   </SelectContent>
