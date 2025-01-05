@@ -669,110 +669,110 @@ export function InboundAirfreightShipmentsPage() {
           </div>
 
 
+        <FormField
+          control={form.control}
+          name="goodsDescription"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Goods Description</FormLabel>
+              <FormControl>
+                <Textarea {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="goodsDescription"
+            name="duimp"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Goods Description</FormLabel>
+                <FormLabel>DUIMP</FormLabel>
                 <FormControl>
-                  <Textarea {...field} />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="duimp"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>DUIMP</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="cct"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>CCT</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select CCT status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Airline">Airline</SelectItem>
-                      <SelectItem value="Pending">Pending</SelectItem>
-                      <SelectItem value="Ready">Ready</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="perishableCargo"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>Perishable Cargo</FormLabel>
-                  </div>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="dangerousCargo"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>Dangerous Cargo</FormLabel>
-                  </div>
-                </FormItem>
-              )}
-            />
-          </div>
           <FormField
             control={form.control}
-            name="notes"
+            name="cct"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Notes</FormLabel>
-                <FormControl>
-                  <Textarea {...field} />
-                </FormControl>
+                <FormLabel>CCT</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select CCT status" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Airline">Airline</SelectItem>
+                    <SelectItem value="Pending">Pending</SelectItem>
+                    <SelectItem value="Ready">Ready</SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="perishableCargo"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Perishable Cargo</FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="dangerousCargo"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Dangerous Cargo</FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+        </div>
+        <FormField
+          control={form.control}
+          name="notes"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Notes</FormLabel>
+              <FormControl>
+                <Textarea {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <DialogFooter>
           <Button type="submit">{submitLabel}</Button>
         </DialogFooter>
