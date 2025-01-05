@@ -44,7 +44,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Pencil, Trash2, Plus } from "lucide-react";
 
 const formSchema = z.object({
-  brlReference: z.string().optional(), // Made optional as it will be auto-generated
+  brlReference: z.string().optional(),
   hawb: z.string().min(1, "HAWB is required"),
   mawb: z.string().min(1, "MAWB is required"),
   shipperId: z.string().min(1, "Shipper is required"),
@@ -60,10 +60,13 @@ const formSchema = z.object({
   arrivalDate: z.string().min(1, "Arrival date is required"),
   pieces: z.string().min(1, "Number of pieces is required"),
   weight: z.string().min(1, "Weight is required"),
+  chargeableWeight: z.string().optional(),
   volume: z.string().optional(),
   goodsDescription: z.string().min(1, "Goods description is required"),
   perishableCargo: z.boolean().default(false),
   dangerousCargo: z.boolean().default(false),
+  duimp: z.string().optional(),
+  cct: z.enum(["Airline", "Pending", "Ready"]).default("Pending"),
   notes: z.string().optional(),
 });
 
@@ -71,7 +74,7 @@ type FormData = z.infer<typeof formSchema>;
 
 function generateBRLReference() {
   const year = new Date().getFullYear().toString().slice(-2);
-  const randomNum = Math.floor(1000 + Math.random() * 9000); // 4-digit random number
+  const randomNum = Math.floor(1000 + Math.random() * 9000);
   return `${year}AI-BR${randomNum}`;
 }
 
@@ -107,10 +110,12 @@ export function InboundAirfreightShipmentsPage() {
       destinationAirportId: "",
       customsBrokerId: "",
       truckerId: "",
+      chargeableWeight: "",
+      duimp: "",
+      cct: "Pending",
     },
   });
 
-  // Fetch related data
   const { data: internationalAgents } = useQuery({
     queryKey: ["/api/admin/international-agents"],
   });
@@ -147,7 +152,6 @@ export function InboundAirfreightShipmentsPage() {
 
   const createMutation = useMutation({
     mutationFn: async (data: FormData) => {
-      // Generate BRL Reference before sending
       const brlReference = generateBRLReference();
       const response = await fetch("/api/admin/airfreight/inbound", {
         method: "POST",
@@ -278,6 +282,9 @@ export function InboundAirfreightShipmentsPage() {
       notes: shipment.notes || "",
       perishableCargo: shipment.perishableCargo,
       dangerousCargo: shipment.dangerousCargo,
+      chargeableWeight: shipment.chargeableWeight || "",
+      duimp: shipment.duimp || "",
+      cct: shipment.cct || "Pending",
     });
     setIsEditOpen(true);
   }
@@ -504,6 +511,106 @@ export function InboundAirfreightShipmentsPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="pieces"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Pieces</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="volume"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Volume</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="weight"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Weight (Gross)</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="chargeableWeight"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Chargeable Weight</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <FormField
+            control={form.control}
+            name="duimp"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>DUIMP</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="cct"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>CCT</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select CCT status" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Airline">Airline</SelectItem>
+                    <SelectItem value="Pending">Pending</SelectItem>
+                    <SelectItem value="Ready">Ready</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="originAirportId"
@@ -602,47 +709,6 @@ export function InboundAirfreightShipmentsPage() {
           />
         </div>
 
-        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <FormField
-            control={form.control}
-            name="pieces"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Pieces</FormLabel>
-                <FormControl>
-                  <Input type="number" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="weight"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Weight (Gross)</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="volume"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Volume</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
 
         <div className="grid grid-cols-1 gap-4">
           <FormField
