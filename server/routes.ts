@@ -65,9 +65,9 @@ export function registerRoutes(app: Express): Server {
       res.json(uploadedDocs);
     } catch (error: any) {
       console.error("Error uploading documents:", error);
-      res.status(500).json({ 
-        error: "Failed to upload documents", 
-        details: error.message 
+      res.status(500).json({
+        error: "Failed to upload documents",
+        details: error.message
       });
     }
   });
@@ -93,9 +93,9 @@ export function registerRoutes(app: Express): Server {
       res.json(shipmentDocs);
     } catch (error: any) {
       console.error("Error fetching documents:", error);
-      res.status(500).json({ 
-        error: "Failed to fetch documents", 
-        details: error.message 
+      res.status(500).json({
+        error: "Failed to fetch documents",
+        details: error.message
       });
     }
   });
@@ -119,9 +119,9 @@ export function registerRoutes(app: Express): Server {
       res.json(allDocuments);
     } catch (error: any) {
       console.error("Error fetching documents:", error);
-      res.status(500).json({ 
-        error: "Failed to fetch documents", 
-        details: error.message 
+      res.status(500).json({
+        error: "Failed to fetch documents",
+        details: error.message
       });
     }
   });
@@ -152,9 +152,9 @@ export function registerRoutes(app: Express): Server {
       res.json(deletedDoc);
     } catch (error: any) {
       console.error("Error deleting document:", error);
-      res.status(500).json({ 
-        error: "Failed to delete document", 
-        details: error.message 
+      res.status(500).json({
+        error: "Failed to delete document",
+        details: error.message
       });
     }
   });
@@ -311,23 +311,23 @@ export function registerRoutes(app: Express): Server {
 
   // Documents CRUD endpoints
   app.get("/api/admin/documents", isAuthenticated, hasRole(["admin"]), async (req, res) => {
-      try {
-        const allDocuments = await db
-          .select({
-            ...documents,
-            shipment: {
-              id: shipments.id,
-              trackingNumber: shipments.trackingNumber,
-            },
-          })
-          .from(documents)
-          .leftJoin(shipments, eq(documents.shipmentId, shipments.id));
-        res.json(allDocuments);
-      } catch (error) {
-        console.error("Error fetching documents:", error);
-        res.status(500).json({ error: "Failed to fetch documents" });
-      }
-    });
+    try {
+      const allDocuments = await db
+        .select({
+          ...documents,
+          shipment: {
+            id: shipments.id,
+            trackingNumber: shipments.trackingNumber,
+          },
+        })
+        .from(documents)
+        .leftJoin(shipments, eq(documents.shipmentId, shipments.id));
+      res.json(allDocuments);
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+      res.status(500).json({ error: "Failed to fetch documents" });
+    }
+  });
 
 
   // Get all shipments for document form
@@ -832,9 +832,9 @@ export function registerRoutes(app: Express): Server {
       res.json(shipmentDetails);
     } catch (error: any) {
       console.error("Error fetching inbound airfreight shipments:", error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: "Failed to fetch inbound airfreight shipments", details: error.message,
-        stack: error.stack 
+        stack: error.stack
       });
     }
   });
@@ -891,9 +891,61 @@ export function registerRoutes(app: Express): Server {
       res.json(shipment);
     } catch (error: any) {
       console.error("Error creating inbound airfreight shipment:", error);
-      res.status(500).json({ 
-        error: "Failed to create inbound airfreight shipment", 
-        details: error.message 
+      res.status(500).json({
+        error: "Failed to create inbound airfreight shipment",
+        details: error.message
+      });
+    }
+  });
+
+  app.put("/api/admin/airfreight/inbound/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      console.log("Updating inbound airfreight shipment with data:", req.body);
+
+      // Parse dates and numbers
+      const updateData = {
+        ...req.body,
+        shipperId: parseInt(req.body.shipperId),
+        consigneeId: parseInt(req.body.consigneeId),
+        internationalAgentId: parseInt(req.body.internationalAgentId),
+        airlineId: parseInt(req.body.airlineId),
+        originAirportId: parseInt(req.body.originAirportId),
+        destinationAirportId: parseInt(req.body.destinationAirportId),
+        customsBrokerId: parseInt(req.body.customsBrokerId),
+        truckerId: parseInt(req.body.truckerId),
+        pieces: parseInt(req.body.pieces),
+        departureDate: new Date(req.body.departureDate),
+        arrivalDate: new Date(req.body.arrivalDate),
+        perishableCargo: Boolean(req.body.perishableCargo),
+        dangerousCargo: Boolean(req.body.dangerousCargo),
+      };
+
+      // Verify the shipment exists
+      const [existingShipment] = await db
+        .select()
+        .from(inboundAirfreightShipments)
+        .where(eq(inboundAirfreightShipments.id, parseInt(req.params.id)))
+        .limit(1);
+
+      if (!existingShipment) {
+        return res.status(404).json({ error: "Shipment not found" });
+      }
+
+      // Update the shipment
+      const [updatedShipment] = await db
+        .update(inboundAirfreightShipments)
+        .set(updateData)
+        .where(eq(inboundAirfreightShipments.id, parseInt(req.params.id)))
+        .returning();
+
+      console.log("Updated inbound airfreight shipment:", updatedShipment);
+      res.json(updatedShipment);
+    } catch (error: any) {
+      console.error("Error updating inbound airfreight shipment:", error);
+      res.status(500).json({
+        error: "Failed to update inbound airfreight shipment",
+        details: error.message,
+        stack: error.stack
       });
     }
   });
@@ -923,10 +975,10 @@ export function registerRoutes(app: Express): Server {
       res.json(deletedShipment);
     } catch (error: any) {
       console.error("Error deleting inbound airfreight shipment:", error);
-      res.status(500).json({ 
-        error: "Failed to delete inbound airfreight shipment", 
+      res.status(500).json({
+        error: "Failed to delete inbound airfreight shipment",
         details: error.message,
-        stack: error.stack 
+        stack: error.stack
       });
     }
   });
