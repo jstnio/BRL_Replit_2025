@@ -489,3 +489,78 @@ export const insertInboundAirfreightShipmentSchema = createInsertSchema(inboundA
 export const selectInboundAirfreightShipmentSchema = createSelectSchema(inboundAirfreightShipments);
 export type InboundAirfreightShipment = typeof inboundAirfreightShipments.$inferSelect;
 export type InsertInboundAirfreightShipment = typeof inboundAirfreightShipments.$inferInsert;
+
+// Outbound Airfreight Shipments
+export const outboundAirfreightShipments = pgTable("outbound_airfreight_shipments", {
+  id: serial("id").primaryKey(),
+  brlReference: text("brl_reference").notNull().unique(),
+  shipperId: integer("shipper_id").references(() => customers.id).notNull(),
+  consigneeId: integer("consignee_id").references(() => customers.id).notNull(),
+  internationalAgentId: integer("international_agent_id").references(() => internationalAgents.id).notNull(),
+  airlineId: integer("airline_id").references(() => airlines.id).notNull(),
+  originAirportId: integer("origin_airport_id").references(() => airports.id).notNull(),
+  destinationAirportId: integer("destination_airport_id").references(() => airports.id).notNull(),
+  customsBrokerId: integer("customs_broker_id").references(() => customsBrokers.id).notNull(),
+  truckerId: integer("trucker_id").references(() => truckers.id).notNull(),
+  hawb: text("hawb").notNull(),
+  mawb: text("mawb").notNull(),
+  flightNumber: text("flight_number").notNull(),
+  departureDate: timestamp("departure_date").notNull(),
+  arrivalDate: timestamp("arrival_date").notNull(),
+  pieces: integer("pieces").notNull(),
+  weight: text("weight").notNull(),
+  chargeableWeight: text("chargeable_weight"),
+  volume: text("volume"),
+  goodsDescription: text("goods_description").notNull(),
+  perishableCargo: boolean("perishable_cargo").default(false).notNull(),
+  dangerousCargo: boolean("dangerous_cargo").default(false).notNull(),
+  status: text("status").notNull().default("pending"),
+  exportDeclaration: text("export_declaration"),
+  dsic: text("dsic"),
+  notes: text("notes"),
+  customsClearanceStatus: text("customs_clearance_status").default("pending"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Add relations for outbound airfreight shipments
+export const outboundAirfreightShipmentRelations = relations(outboundAirfreightShipments, ({ one }) => ({
+  shipper: one(customers, {
+    fields: [outboundAirfreightShipments.shipperId],
+    references: [customers.id],
+  }),
+  consignee: one(customers, {
+    fields: [outboundAirfreightShipments.consigneeId],
+    references: [customers.id],
+  }),
+  internationalAgent: one(internationalAgents, {
+    fields: [outboundAirfreightShipments.internationalAgentId],
+    references: [internationalAgents.id],
+  }),
+  airline: one(airlines, {
+    fields: [outboundAirfreightShipments.airlineId],
+    references: [airlines.id],
+  }),
+  originAirport: one(airports, {
+    fields: [outboundAirfreightShipments.originAirportId],
+    references: [airports.id],
+  }),
+  destinationAirport: one(airports, {
+    fields: [outboundAirfreightShipments.destinationAirportId],
+    references: [airports.id],
+  }),
+  customsBroker: one(customsBrokers, {
+    fields: [outboundAirfreightShipments.customsBrokerId],
+    references: [customsBrokers.id],
+  }),
+  trucker: one(truckers, {
+    fields: [outboundAirfreightShipments.truckerId],
+    references: [truckers.id],
+  }),
+}));
+
+// Add schema validation
+export const insertOutboundAirfreightShipmentSchema = createInsertSchema(outboundAirfreightShipments);
+export const selectOutboundAirfreightShipmentSchema = createSelectSchema(outboundAirfreightShipments);
+export type OutboundAirfreightShipment = typeof outboundAirfreightShipments.$inferSelect;
+export type InsertOutboundAirfreightShipment = typeof outboundAirfreightShipments.$inferInsert;
