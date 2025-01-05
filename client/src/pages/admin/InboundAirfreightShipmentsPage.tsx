@@ -800,10 +800,6 @@ export function InboundAirfreightShipmentsPage() {
             </FormItem>
           )}
         />
-
-        <DialogFooter>
-          <Button type="submit">{submitLabel}</Button>
-        </DialogFooter>
       </form>
     </Form>
   );
@@ -950,6 +946,9 @@ export function InboundAirfreightShipmentsPage() {
               </DialogDescription>
             </DialogHeader>
             {renderForm(onCreateSubmit, "Create Shipment")}
+            <DialogFooter>
+              <Button type="submit">Create Shipment</Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
