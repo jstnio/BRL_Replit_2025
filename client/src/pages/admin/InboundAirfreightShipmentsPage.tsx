@@ -396,7 +396,7 @@ export function InboundAirfreightShipmentsPage() {
           />
         </div>
 
-        {/* International Agent and Customs Broker in same line */}
+        {/* International Agent and Airline in same line */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -427,23 +427,23 @@ export function InboundAirfreightShipmentsPage() {
           />
           <FormField
             control={form.control}
-            name="customsBrokerId"
+            name="airlineId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Customs Broker</FormLabel>
+                <FormLabel>Airline</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select customs broker" />
+                      <SelectValue placeholder="Select airline" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {customsBrokers?.map((broker: any) => (
-                      <SelectItem key={broker.id} value={broker.id.toString()}>
-                        {broker.commercialName}
+                    {airlines?.map((airline: any) => (
+                      <SelectItem key={airline.id} value={airline.id.toString()}>
+                        {airline.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -626,6 +626,64 @@ export function InboundAirfreightShipmentsPage() {
             </FormItem>
           )}
         />
+
+        {/* Customs Broker and Trucker in same line */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="customsBrokerId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Customs Broker</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select customs broker" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {customsBrokers?.map((broker: any) => (
+                      <SelectItem key={broker.id} value={broker.id.toString()}>
+                        {broker.commercialName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="truckerId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Trucker</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select trucker" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {truckers?.map((trucker: any) => (
+                      <SelectItem key={trucker.id} value={trucker.id.toString()}>
+                        {trucker.commercialName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
