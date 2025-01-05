@@ -28,11 +28,28 @@ export function registerRoutes(app: Express): Server {
         return res.status(400).json({ error: "No files uploaded" });
       }
 
+      // Get shipmentId from form data
+      const shipmentId = req.body.shipmentId ? parseInt(req.body.shipmentId) : null;
+
+      // If shipmentId is provided, verify shipment exists
+      if (shipmentId) {
+        const [existingShipment] = await db
+          .select()
+          .from(inboundAirfreightShipments)
+          .where(eq(inboundAirfreightShipments.id, shipmentId))
+          .limit(1);
+
+        if (!existingShipment) {
+          return res.status(404).json({ error: "Shipment not found" });
+        }
+      }
+
       const uploadedFiles = req.files as Express.Multer.File[];
       const uploadedDocs = await Promise.all(
         uploadedFiles.map(async (file) => {
-          // Create document record
+          // Create document record with shipmentId
           const [doc] = await db.insert(documents).values({
+            shipmentId,
             filename: file.originalname,
             fileContent: file.buffer.toString('base64'),
             fileSize: file.size,
@@ -59,8 +76,18 @@ export function registerRoutes(app: Express): Server {
   app.get("/api/admin/documents/:shipmentId", isAuthenticated, hasRole(["admin"]), async (req, res) => {
     try {
       const shipmentDocs = await db
-        .select()
+        .select({
+          ...documents,
+          shipment: {
+            id: inboundAirfreightShipments.id,
+            brlReference: inboundAirfreightShipments.brlReference,
+          },
+        })
         .from(documents)
+        .leftJoin(
+          inboundAirfreightShipments,
+          eq(documents.shipmentId, inboundAirfreightShipments.id)
+        )
         .where(eq(documents.shipmentId, parseInt(req.params.shipmentId)));
 
       res.json(shipmentDocs);
@@ -72,6 +99,43 @@ export function registerRoutes(app: Express): Server {
       });
     }
   });
+
+  // All documents endpoint for admin
+  app.get("/api/admin/documents", isAuthenticated, hasRole(["admin"]), async (req, res) => {
+    try {
+      const allDocuments = await db
+        .select({
+          ...documents,
+          shipment: {
+            id: inboundAirfreightShipments.id,
+            brlReference: inboundAirfreightShipments.brlReference,
+          },
+        })
+        .from(documents)
+        .leftJoin(
+          inboundAirfreightShipments,
+          eq(documents.shipmentId, inboundAirfreightShipments.id)
+        );
+      res.json(allDocuments);
+    } catch (error: any) {
+      console.error("Error fetching documents:", error);
+      res.status(500).json({ 
+        error: "Failed to fetch documents", 
+        details: error.message 
+      });
+    }
+  });
+
+  // Helper function to determine document type based on filename
+  function determineDocumentType(filename: string): string {
+    const lowerFilename = filename.toLowerCase();
+    if (lowerFilename.includes('mawb')) return 'MAWB';
+    if (lowerFilename.includes('hawb')) return 'HAWB';
+    if (lowerFilename.includes('invoice')) return 'Commercial Invoice';
+    if (lowerFilename.includes('packing')) return 'Packing List';
+    if (lowerFilename.includes('manifest')) return 'Cargo Manifest';
+    return 'Other';
+  }
 
   // Delete document
   app.delete("/api/admin/documents/:id", isAuthenticated, hasRole(["admin"]), async (req, res) => {
@@ -94,17 +158,6 @@ export function registerRoutes(app: Express): Server {
       });
     }
   });
-
-  // Helper function to determine document type based on filename
-  function determineDocumentType(filename: string): string {
-    const lowerFilename = filename.toLowerCase();
-    if (lowerFilename.includes('mawb')) return 'MAWB';
-    if (lowerFilename.includes('hawb')) return 'HAWB';
-    if (lowerFilename.includes('invoice')) return 'Commercial Invoice';
-    if (lowerFilename.includes('packing')) return 'Packing List';
-    if (lowerFilename.includes('manifest')) return 'Cargo Manifest';
-    return 'Other';
-  }
 
   // Airlines CRUD endpoints
   app.get("/api/admin/airlines", isAuthenticated, hasRole(["admin"]), async (req, res) => {
@@ -258,23 +311,24 @@ export function registerRoutes(app: Express): Server {
 
   // Documents CRUD endpoints
   app.get("/api/admin/documents", isAuthenticated, hasRole(["admin"]), async (req, res) => {
-    try {
-      const allDocuments = await db
-        .select({
-          ...documents,
-          shipment: {
-            id: shipments.id,
-            trackingNumber: shipments.trackingNumber,
-          },
-        })
-        .from(documents)
-        .leftJoin(shipments, eq(documents.shipmentId, shipments.id));
-      res.json(allDocuments);
-    } catch (error) {
-      console.error("Error fetching documents:", error);
-      res.status(500).json({ error: "Failed to fetch documents" });
-    }
-  });
+      try {
+        const allDocuments = await db
+          .select({
+            ...documents,
+            shipment: {
+              id: shipments.id,
+              trackingNumber: shipments.trackingNumber,
+            },
+          })
+          .from(documents)
+          .leftJoin(shipments, eq(documents.shipmentId, shipments.id));
+        res.json(allDocuments);
+      } catch (error) {
+        console.error("Error fetching documents:", error);
+        res.status(500).json({ error: "Failed to fetch documents" });
+      }
+    });
+
 
   // Get all shipments for document form
   app.get("/api/admin/shipments", isAuthenticated, hasRole(["admin"]), async (req, res) => {

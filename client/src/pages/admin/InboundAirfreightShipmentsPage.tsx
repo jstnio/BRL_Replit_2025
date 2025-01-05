@@ -790,132 +790,135 @@ export function InboundAirfreightShipmentsPage() {
           )}
         />
 
-        {/* Document Upload Section */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-medium">Shipping Documents</h3>
-            <input
-              type="file"
-              multiple
-              onChange={async (e) => {
-                if (!e.target.files?.length) return;
-
-                const formData = new FormData();
-                for (let i = 0; i < e.target.files.length; i++) {
-                  const file = e.target.files[i];
-                  formData.append('files', file);
-                }
-
-                try {
-                  const response = await fetch('/api/admin/documents/upload', {
-                    method: 'POST',
-                    body: formData,
-                    credentials: 'include',
-                  });
-
-                  if (!response.ok) {
-                    throw new Error(await response.text());
-                  }
-
-                  toast({
-                    title: "Files uploaded",
-                    description: "Documents have been uploaded successfully.",
-                  });
-
-                  // Refresh documents list
-                  queryClient.invalidateQueries({ queryKey: ['/api/admin/documents'] });
-                } catch (error: any) {
-                  toast({
-                    variant: "destructive",
-                    title: "Upload failed",
-                    description: error.message,
-                  });
-                }
-              }}
-              className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
-            />
-          </div>
-
-          {/* Document List */}
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>File Name</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Size</TableHead>
-                  <TableHead>Uploaded</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {documents?.map((doc: any) => (
-                  <TableRow key={doc.id}>
-                    <TableCell>{doc.filename}</TableCell>
-                    <TableCell>{doc.type}</TableCell>
-                    <TableCell>{formatFileSize(doc.fileSize)}</TableCell>
-                    <TableCell>{new Date(doc.uploadedAt).toLocaleString()}</TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          // Convert base64 to blob and download
-                          const blob = new Blob([Buffer.from(doc.fileContent, 'base64')], { type: doc.mimeType });
-                          const url = window.URL.createObjectURL(blob);
-                          const a = document.createElement('a');
-                          a.href = url;
-                          a.download = doc.filename;
-                          a.click();
-                          window.URL.revokeObjectURL(url);
-                        }}
-                      >
-                        <Download className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={async () => {
-                          try {
-                            const response = await fetch(`/api/admin/documents/${doc.id}`, {
-                              method: 'DELETE',
-                              credentials: 'include',
-                            });
-
-                            if (!response.ok) {
-                              throw new Error(await response.text());
-                            }
-
-                            toast({
-                              title: "Document deleted",
-                              description: "The document has been deleted successfully.",
-                            });
-
-                            queryClient.invalidateQueries({ queryKey: ['/api/admin/documents'] });
-                          } catch (error: any) {
-                            toast({
-                              variant: "destructive",
-                              title: "Delete failed",
-                              description: error.message,
-                            });
-                          }
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
-
         <DialogFooter>
           <Button type="submit">{submitLabel}</Button>
         </DialogFooter>
       </form>
     </Form>
+  );
+
+  const DocumentSection = ({ shipmentId, brlReference }: { shipmentId: number, brlReference: string }) => (
+    <div className="space-y-4 mt-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-medium">Shipping Documents</h3>
+        <input
+          type="file"
+          multiple
+          onChange={async (e) => {
+            if (!e.target.files?.length) return;
+
+            const formData = new FormData();
+            for (let i = 0; i < e.target.files.length; i++) {
+              const file = e.target.files[i];
+              formData.append('files', file);
+            }
+            formData.append('shipmentId', shipmentId.toString());
+            formData.append('brlReference', brlReference);
+
+            try {
+              const response = await fetch('/api/admin/documents/upload', {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+              });
+
+              if (!response.ok) {
+                throw new Error(await response.text());
+              }
+
+              toast({
+                title: "Files uploaded",
+                description: "Documents have been uploaded successfully.",
+              });
+
+              // Refresh documents list
+              queryClient.invalidateQueries({ queryKey: ['/api/admin/documents'] });
+            } catch (error: any) {
+              toast({
+                variant: "destructive",
+                title: "Upload failed",
+                description: error.message,
+              });
+            }
+          }}
+          className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+        />
+      </div>
+
+      {/* Document List */}
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>File Name</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Size</TableHead>
+              <TableHead>Uploaded</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {documents?.filter((doc: any) => doc.shipmentId === shipmentId).map((doc: any) => (
+              <TableRow key={doc.id}>
+                <TableCell>{doc.filename}</TableCell>
+                <TableCell>{doc.type}</TableCell>
+                <TableCell>{formatFileSize(doc.fileSize)}</TableCell>
+                <TableCell>{new Date(doc.uploadedAt).toLocaleString()}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      // Convert base64 to blob and download
+                      const blob = new Blob([Buffer.from(doc.fileContent, 'base64')], { type: doc.mimeType });
+                      const url = window.URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = doc.filename;
+                      a.click();
+                      window.URL.revokeObjectURL(url);
+                    }}
+                  >
+                    <Download className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={async () => {
+                      try {
+                        const response = await fetch(`/api/admin/documents/${doc.id}`, {
+                          method: 'DELETE',
+                          credentials: 'include',
+                        });
+
+                        if (!response.ok) {
+                          throw new Error(await response.text());
+                        }
+
+                        toast({
+                          title: "Document deleted",
+                          description: "The document has been deleted successfully.",
+                        });
+
+                        queryClient.invalidateQueries({ queryKey: ['/api/admin/documents'] });
+                      } catch (error: any) {
+                        toast({
+                          variant: "destructive",
+                          title: "Delete failed",
+                          description: error.message,
+                        });
+                      }
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
   );
 
   return (
@@ -1003,14 +1006,20 @@ export function InboundAirfreightShipmentsPage() {
       </div>
 
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Shipment</DialogTitle>
             <DialogDescription>
-              Modify inbound airfreight shipment information
+              Update the inbound airfreight shipment details
             </DialogDescription>
           </DialogHeader>
           {renderForm(onEditSubmit, "Update Shipment")}
+          {selectedShipment && (
+            <DocumentSection
+              shipmentId={selectedShipment.id}
+              brlReference={selectedShipment.brlReference}
+            />
+          )}
         </DialogContent>
       </Dialog>
 
