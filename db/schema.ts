@@ -233,7 +233,7 @@ export const shipments = pgTable("shipments", {
 // Shipping Documents
 export const documents = pgTable("documents", {
   id: serial("id").primaryKey(),
-  shipmentId: integer("shipment_id").references(() => shipments.id).notNull(),
+  shipmentId: integer("shipment_id").references(() => shipments.id), // Made optional by removing .notNull()
   type: text("type").notNull(), // invoice, bill_of_lading, customs, etc.
   filename: text("filename").notNull(),
   fileContent: text("file_content").notNull(), // Base64 encoded file content
