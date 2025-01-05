@@ -85,6 +85,7 @@ export function InboundAirfreightShipmentsPage() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [selectedShipperCountry, setSelectedShipperCountry] = useState<string | null>(null);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -360,7 +361,13 @@ export function InboundAirfreightShipmentsPage() {
               <FormItem>
                 <FormLabel>Shipper (Overseas Customer)</FormLabel>
                 <Select
-                  onValueChange={field.onChange}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    const selectedShipper = overseasCustomers.find(
+                      (customer: any) => customer.id.toString() === value
+                    );
+                    setSelectedShipperCountry(selectedShipper?.country || null);
+                  }}
                   defaultValue={field.value}
                 >
                   <FormControl>
@@ -526,11 +533,15 @@ export function InboundAirfreightShipmentsPage() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {overseasAirports?.map((airport: any) => (
-                      <SelectItem key={airport.id} value={airport.id.toString()}>
-                        {airport.name} ({airport.iataCode}) - {airport.country}
-                      </SelectItem>
-                    ))}
+                    {overseasAirports
+                      ?.filter((airport: any) =>
+                        !selectedShipperCountry || airport.country === selectedShipperCountry
+                      )
+                      .map((airport: any) => (
+                        <SelectItem key={airport.id} value={airport.id.toString()}>
+                          {airport.name} ({airport.iataCode}) - {airport.country}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -553,7 +564,7 @@ export function InboundAirfreightShipmentsPage() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {brazilianAirports?.map((airport: any) => (
+                    {brazilianAirports.map((airport: any) => (
                       <SelectItem key={airport.id} value={airport.id.toString()}>
                         {airport.name} ({airport.iataCode}) - {airport.city}
                       </SelectItem>
@@ -948,23 +959,25 @@ export function InboundAirfreightShipmentsPage() {
           <TableHeader>
             <TableRow>
               <TableHead>HAWB</TableHead>
-              <TableHead>Flight</TableHead>
+              <TableHead>Shipper</TableHead>
               <TableHead>Origin</TableHead>
+              <TableHead>Consignee</TableHead>
               <TableHead>Destination</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>Flight</TableHead>
+              <TableHead>Arrival</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center">
+                <TableCell colSpan={8} className="text-center">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : shipments?.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center">
+                <TableCell colSpan={8} className="text-center">
                   No shipments found
                 </TableCell>
               </TableRow>
@@ -972,31 +985,89 @@ export function InboundAirfreightShipmentsPage() {
               shipments?.map((shipment: any) => (
                 <TableRow key={shipment.id}>
                   <TableCell>{shipment.hawb}</TableCell>
+                  <TableCell>
+                    {overseasCustomers.find((c: any) => c.id === shipment.shipperId)?.commercialName}
+                  </TableCell>
+                  <TableCell>
+                    {shipment.originAirport.name} ({shipment.originAirport.iataCode})
+                  </TableCell>
+                  <TableCell>
+                    {brazilianCustomers.find((c: any) => c.id === shipment.consigneeId)?.commercialName}
+                  </TableCell>
+                  <TableCell>
+                    {shipment.destinationAirport.name} ({shipment.destinationAirport.iataCode})
+                  </TableCell>
                   <TableCell>{shipment.flightNumber}</TableCell>
-                  <TableCell>
-                    {shipment.originAirport?.iataCode} - {shipment.originAirport?.city} ({shipment.originAirport?.country})
-                  </TableCell>
-                  <TableCell>
-                    {shipment.destinationAirport?.iataCode} - {shipment.destinationAirport?.city} ({shipment.destinationAirport?.country})
-                  </TableCell>
-                  <TableCell>{shipment.status}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleEdit(shipment)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(shipment)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                  <TableCell>{new Date(shipment.arrivalDate).toLocaleDateString()}</TableCell>
+                  <TableCell className="text-right">
+                    <Dialog open={isEditOpen && selectedShipment?.id === shipment.id} onOpenChange={(open) => {
+                      setIsEditOpen(open);
+                      if (!open) setSelectedShipment(null);
+                    }}>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEdit(shipment)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                        <DialogHeader>
+                          <DialogTitle>Edit Inbound Shipment</DialogTitle>
+                          <DialogDescription>
+                            Update the inbound airfreight shipment details
+                          </DialogDescription>
+                        </DialogHeader>
+                        {renderForm(onEditSubmit, "Update Shipment")}
+                        {selectedShipment && (
+                          <DocumentSection
+                            shipmentId={selectedShipment.id}
+                            brlReference={selectedShipment.brlReference}
+                          />
+                        )}
+                        <DialogFooter className="mt-6">
+                          <Button type="button" onClick={form.handleSubmit(onEditSubmit)}>
+                            Update Shipment
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                    <Dialog open={isDeleteOpen && selectedShipment?.id === shipment.id} onOpenChange={(open) => {
+                      setIsDeleteOpen(open);
+                      if (!open) setSelectedShipment(null);
+                    }}>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(shipment)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Delete Shipment</DialogTitle>
+                          <DialogDescription>
+                            Are you sure you want to delete this shipment? This action cannot be undone.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                          <Button
+                            variant="destructive"
+                            onClick={() => {
+                              if (selectedShipment) {
+                                deleteMutation.mutate(selectedShipment.id);
+                              }
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
                   </TableCell>
                 </TableRow>
               ))
@@ -1006,46 +1077,11 @@ export function InboundAirfreightShipmentsPage() {
       </div>
 
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Edit Shipment</DialogTitle>
-            <DialogDescription>
-              Update the inbound airfreight shipment details
-            </DialogDescription>
-          </DialogHeader>
-          {renderForm(onEditSubmit, "Update Shipment")}
-          {selectedShipment && (
-            <DocumentSection
-              shipmentId={selectedShipment.id}
-              brlReference={selectedShipment.brlReference}
-            />
-          )}
-        </DialogContent>
+        {/*DialogContent moved inside the edit Dialog in the table*/}
       </Dialog>
 
       <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Shipment</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete shipment {selectedShipment?.hawb}? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsDeleteOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={() => selectedShipment && deleteMutation.mutate(selectedShipment.id)}
-            >
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
+        {/*DialogContent moved inside the delete Dialog in the table*/}
       </Dialog>
     </AdminPageLayout>
   );
